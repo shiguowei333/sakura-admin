@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'rest_framework',
-    'corsheaders'
+    'corsheaders',
+    'apps.system.sakura_auth'
 ]
 
 MIDDLEWARE = [
@@ -132,3 +133,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # 允许所有域名跨域访问服务
 CORS_ALLOW_ALL_ORIGINS = True
+
+# 覆盖django自带的User模型
+AUTH_USER_MODEL ='sakura_auth.SakuraUser'

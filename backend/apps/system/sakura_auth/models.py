@@ -1,53 +1,55 @@
-from datetime import timezone
-
-from django.contrib.auth.models import User, AbstractBaseUser, PermissionsMixin
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.db import models
 from shortuuidfield import ShortUUIDField
+from django.contrib.auth.hashers import make_password
 
 
 # Create your models here.
 
+class SakuraUserManager(BaseUserManager):
+    """
+    自定义sakura-admin系统用户模型的manager类
+    """
+    use_in_migrations = True
+
+    def _create_user(self, username, password, **extra_fields):
+        """
+        初始化用户相关功能
+        """
+        if not username:
+            raise ValueError("必须设置用户名！")
+
+        user = self.model(username=username, **extra_fields)
+        user.password = make_password(password)
+        user.save(using=self._db)
+        return user
 
 
-class SakuraUser(AbstractBaseUser, PermissionsMixin):
+    def create_superuser(self, username, password=None, **extra_fields):
+        """
+        暂时不增加超级管理员的概念，权限相关暂时使用认证登录即可，后续增加RBAC权限相关的内容
+        """
+        return self._create_user(username, password, **extra_fields)
+
+
+class SakuraUser(AbstractBaseUser):
     """
     重写django默认的用户模型，自定义sakura-admin系统用户模型
     """
     uid = ShortUUIDField(primary_key=True, verbose_name='主键')
     username = models.CharField(max_length=150, unique=True, verbose_name='用户名')
-    realname = models.CharField(max_length=150, verbose_name='真实姓名')
-    email = models.CharField(max_length=150, unique=True, null=True, verbose_name='邮箱')
-    mobile = models.CharField(max_length=150,unique=True, null=True, verbose_name='手机号')
-    avatar = models.CharField(max_length=150, verbose_name='用户头像')
+    name = models.CharField(max_length=150, verbose_name='姓名/昵称')
+    telephone = models.CharField(max_length=150,unique=True, verbose_name='电话号码')
+    avatar = models.CharField(max_length=150, blank=True, verbose_name='用户头像')
+    email = models.CharField(max_length=150, blank=True, verbose_name='邮箱')
     is_active = models.BooleanField(default=True, verbose_name='用户状态')
-    create_time = models.DateTimeField(default=timezone.now, verbose_name='创建时间')
+    create_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
 
-    objects = UserManager()
+    objects = SakuraUserManager()
 
     EMAIL_FIELD = "email"
     USERNAME_FIELD = "username"
-    REQUIRED_FIELDS = ["email"]
 
     class Meta:
-        verbose_name = _("user")
-        verbose_name_plural = _("users")
-        abstract = True
-
-    def clean(self):
-        super().clean()
-        self.email = self.__class__.objects.normalize_email(self.email)
-
-    def get_full_name(self):
-        """
-        Return the first_name plus the last_name, with a space in between.
-        """
-        full_name = "%s %s" % (self.first_name, self.last_name)
-        return full_name.strip()
-
-    def get_short_name(self):
-        """Return the short name for the user."""
-        return self.first_name
-
-    def email_user(self, subject, message, from_email=None, **kwargs):
-        """Send an email to this user."""
-        send_mail(subject, message, from_email, [self.email], **kwargs)
+        verbose_name = "用户表"
+        verbose_name_plural = verbose_name
