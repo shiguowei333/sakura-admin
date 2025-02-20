@@ -19,7 +19,7 @@ class SakuraUserManager(BaseUserManager):
         if not username:
             raise ValueError("必须设置用户名！")
 
-        user = self.model(username=username, **extra_fields)
+        user = self.model(username=username, name=username, **extra_fields)
         user.password = make_password(password)
         user.save(using=self._db)
         return user
