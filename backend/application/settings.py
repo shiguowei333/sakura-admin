@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
+from datetime import timedelta
 # 依赖版本控制
 # pip freeze > requirements.txt
 
@@ -129,6 +130,7 @@ USE_TZ = False
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
+# 主键默认使用自增字段
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # 允许所有域名跨域访问服务
@@ -136,3 +138,17 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 # 覆盖django自带的User模型
 AUTH_USER_MODEL ='sakura_auth.SakuraUser'
+
+# REST_FRAMEWORK配置
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
+
+# JWT配置
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+    # 'ROTATE_REFRESH_TOKENS': True  # 自动刷新refresh_token
+}
