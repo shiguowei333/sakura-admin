@@ -16,6 +16,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from datetime import timedelta
 from pathlib import Path
 
+# 获取项目根路径
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -23,9 +24,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
+# 项目初始默认密钥
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-pv3!6^0f(!(!0x)!x)npw2%^l%)6zccrb#p&&%v)9pwrwo86-5'
 
+# 是否开启DEBUG模式
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -68,6 +71,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+# 路由入口文件
 ROOT_URLCONF = 'application.urls'
 
 # 注释模板引擎配置
@@ -86,6 +90,10 @@ ROOT_URLCONF = 'application.urls'
 #         },
 #     },
 # ]
+
+# ================================================= #
+# ******************* WSGI配置 ******************** #
+# ================================================= #
 
 WSGI_APPLICATION = 'application.wsgi.application'
 
