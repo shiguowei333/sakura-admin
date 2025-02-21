@@ -25,18 +25,20 @@ class BaseResponse(Response):
 # 标准响应成功的返回，业务码默认为1
 class SuccessResponse(BaseResponse):
     def __init__(self, data=None, message='处理请求成功！', status=status.HTTP_200_OK):
-        super().__init__(1, True, message, data, status)
+        super().__init__('1', True, message, data, status)
 
 
 # 标准响应失败的返回，业务码默认返回0，自定义返回data数据和message
 class FailureResponse(BaseResponse):
     def __init__(self, message='处理请求失败！', status=status.HTTP_400_BAD_REQUEST):
-        super().__init__(0, False, message, status)
+        super().__init__('0', False, message, status)
 
+# 令牌校验失败响应
 class UnauthorizedResponse(BaseResponse):
     def __init__(self, message='令牌校验失败！', status=status.HTTP_401_UNAUTHORIZED):
-        super().__init__(0, False, message, status)
+        super().__init__('0', False, message, status=status)
 
+# 权限验证失败响应
 class UnPermission:
     def __init__(self, message='权限不足！', status=status.HTTP_403_FORBIDDEN):
-        super().__init__(0, False, message, status)
+        super().__init__('0', False, message, status)
