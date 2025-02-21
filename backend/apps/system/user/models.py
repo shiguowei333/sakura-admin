@@ -36,7 +36,7 @@ class User(AbstractBaseUser):
     """
     重写django默认的用户模型，自定义sakura-admin系统用户模型
     """
-    uid = ShortUUIDField(primary_key=True, verbose_name='主键')
+    id = ShortUUIDField(primary_key=True, verbose_name='主键')
     username = models.CharField(max_length=150, unique=True, verbose_name='用户名')
     name = models.CharField(max_length=150, verbose_name='姓名/昵称')
     telephone = models.CharField(max_length=150,unique=True, verbose_name='电话号码')
