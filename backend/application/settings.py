@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'rest_framework',
     'corsheaders',
-    'apps.system.user'
+    'apps.system.user',
 ]
 # 业务应用
 MY_APPS = [
@@ -167,14 +167,13 @@ AUTH_USER_MODEL ='user.User'
 
 # REST_FRAMEWORK配置
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
+    'DEFAULT_AUTHENTICATION_CLASSES': ('rest_framework_simplejwt.authentication.JWTAuthentication',)
 }
 
 # JWT配置
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=2),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
-    # 'ROTATE_REFRESH_TOKENS': True  # 自动刷新refresh_token
+    'ROTATE_REFRESH_TOKENS': True,  # 自动刷新refresh_token
+    'BLACKLIST_AFTER_ROTATION': True # 刷新后旧token自动加入黑名单
 }
