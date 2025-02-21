@@ -1,4 +1,4 @@
-# 对drf的响应进行二次封装类
+# 对drf的响应进行二次封装
 
 from rest_framework.response import Response
 from rest_framework import status

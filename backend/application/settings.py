@@ -9,10 +9,11 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-from datetime import timedelta
+
 # 依赖版本控制
 # pip freeze > requirements.txt
 
+from datetime import timedelta
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -31,8 +32,12 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 
-# Application definition
+# ================================================= #
+# ******************** 应用配置 ******************** #
+# ================================================= #
 
+# Application definition
+# 系统应用
 INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -40,8 +45,18 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'rest_framework',
     'corsheaders',
-    'apps.system.sakura_auth'
+    'apps.system.user'
 ]
+# 业务应用
+MY_APPS = [
+
+]
+
+INSTALLED_APPS += MY_APPS
+
+# ================================================= #
+# ******************** 中间件配置 ******************* #
+# ================================================= #
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -75,6 +90,10 @@ ROOT_URLCONF = 'application.urls'
 WSGI_APPLICATION = 'application.wsgi.application'
 
 
+# ================================================= #
+# ******************* 数据库配置 ******************** #
+# ================================================= #
+
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
@@ -89,6 +108,9 @@ DATABASES = {
     }
 }
 
+# ================================================= #
+# **************** 密码复杂度校验配置 ***************** #
+# ================================================= #
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -108,6 +130,10 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+
+# ================================================= #
+# ****************** 时区国际化配置 ****************** #
+# ================================================= #
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
@@ -137,7 +163,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOW_ALL_ORIGINS = True
 
 # 覆盖django自带的User模型
-AUTH_USER_MODEL ='sakura_auth.SakuraUser'
+AUTH_USER_MODEL ='user.User'
 
 # REST_FRAMEWORK配置
 REST_FRAMEWORK = {
