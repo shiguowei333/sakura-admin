@@ -1,6 +1,7 @@
 from django.urls import path
+from . import views
 
-app_name = 'sakura_auth'
+app_name = 'user'
 
 urlpatterns = [
 ]
