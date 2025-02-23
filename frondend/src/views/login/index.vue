@@ -31,10 +31,7 @@ const { dataTheme, overallStyle, dataThemeChange } = useDataThemeChange();
 dataThemeChange(overallStyle.value);
 const { title } = useNav();
 
-const ruleForm = reactive({
-  username: "admin",
-  password: "admin123"
-});
+const ruleForm = reactive({});
 
 const onLogin = async (formEl) => {
   if (!formEl) return;
@@ -42,9 +39,10 @@ const onLogin = async (formEl) => {
     if (valid) {
       loading.value = true;
       useUserStoreHook()
-        .loginByUsername({ username: ruleForm.username, password: "admin123" })
+        .loginByUsername({ username: ruleForm.username, password: ruleForm.password })
         .then(res => {
           if (res.success) {
+            console.log(res)
             // 获取后端路由
             return initRouter().then(() => {
               router.push(getTopMenu(true).path).then(() => {

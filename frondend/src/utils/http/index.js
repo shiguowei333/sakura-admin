@@ -4,8 +4,11 @@ import NProgress from "../progress";
 import { getToken, formatToken } from "@/utils/auth";
 import { useUserStoreHook } from "@/store/modules/user";
 
+const { VITE_BASE_URL } = import.meta.env;
+
 // 相关配置请参考：www.axios-js.com/zh-cn/docs/#axios-request-config-1
 const defaultConfig = {
+  baseURL: VITE_BASE_URL,
   // 请求超时时间
   timeout: 10000,
   headers: {
@@ -27,7 +30,7 @@ class PureHttp {
 
   /** `token`过期后，暂存待执行的请求 */
   static requests = [];
-
+y
   /** 防止重复刷新`token` */
   static isRefreshing = false;
 
