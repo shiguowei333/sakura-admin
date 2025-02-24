@@ -49,6 +49,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'apps.system.user',
+    'apps.system.department',
+    'apps.system.role',
+    'apps.system.menu',
 ]
 # 业务应用
 MY_APPS = [
