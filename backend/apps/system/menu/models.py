@@ -13,38 +13,56 @@ class Menu(models.Model):
         LINK = 3, "外链"
         BUTTON = 4, "按钮"
 
+
+    id = ShortUUIDField(primary_key=True, verbose_name='主键')
+    parent = models.ForeignKey('self', on_delete=models.SET_NULL, verbose_name="上级菜单", null=True, blank=True)
+    name = models.CharField(max_length=128, verbose_name="标识名称，路由/外链")
+    menu_type = models.SmallIntegerField(choices=MenuTypeChoices, verbose_name="菜单类型")
+    code = models.CharField(max_length=128, unique=True, null=True, default=None, verbose_name="权限标识")
+    path = models.CharField(max_length=255, null=True, verbose_name="路由地址")
+    component = models.CharField(max_length=255, blank=True, null=True, verbose_name="组件路径")
+    redirect = models.CharField(max_length=128, blank=True, verbose_name="重定向地址")
+    create_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
+    update_time = models.DateTimeField(auto_now=True, verbose_name='更新时间')
+
+    class Meta:
+        verbose_name = "菜单/权限表"
+        verbose_name_plural = verbose_name
+        ordering = ("create_time",)
+
+
+class MenuMeta(models.Model):
+    """
+    菜单/权限表元数据模型
+    """
+
+
     class AnimationTypeChoices(models.TextChoices):
         BOUNCE = "bounce", "bounce"
         FLASH = "flash", "flash"
         PULSE = "pulse", "pulse"
         RUBBER_BAND = "rubberBand", "rubberBand"
 
-
     id = ShortUUIDField(primary_key=True, verbose_name='主键')
-    parent = models.ForeignKey('self', on_delete=models.SET_NULL, verbose_name="上级菜单", null=True, blank=True)
-    name = models.CharField(max_length=128, verbose_name="菜单名称")
-    menu_type = models.SmallIntegerField(choices=MenuTypeChoices, verbose_name="菜单类型")
-    router_name = models.CharField(max_length=128, blank=True, verbose_name="路由名称")
-    router_path = models.CharField(max_length=128, blank=True, verbose_name="路由路径")
-    component = models.CharField(max_length=128, blank=True, verbose_name="组件路径")
-    rank = models.IntegerField(default=999, verbose_name="菜单排序")
-    router_redirect = models.CharField(max_length=128, blank=True, verbose_name='路由重定向地址')
+    title = models.CharField(max_length=128, null=True, blank=True, verbose_name="菜单名称")
     icon = models.CharField(max_length=128, blank=True, verbose_name="菜单图标")
-    enter_animation = models.CharField(max_length=128, choices=AnimationTypeChoices, default=AnimationTypeChoices.BOUNCE, verbose_name="进入动画")
-    leave_animation = models.CharField(max_length=128, choices=AnimationTypeChoices, default=AnimationTypeChoices.BOUNCE, verbose_name="离开动画")
+    rank = models.IntegerField(default=999, verbose_name="菜单排序")
+    enter_animation = models.CharField(max_length=128, choices=AnimationTypeChoices,
+                                       default=AnimationTypeChoices.BOUNCE, verbose_name="进入动画")
+    leave_animation = models.CharField(max_length=128, choices=AnimationTypeChoices,
+                                       default=AnimationTypeChoices.BOUNCE, verbose_name="离开动画")
     is_show = models.BooleanField(verbose_name="是否显示", default=True)
-    parent_is_show = models.BooleanField(verbose_name='父级菜单是否显示')
-    cache_page = models.BooleanField(max_length=128, verbose_name="缓存页面")
+    parent_is_show = models.BooleanField(verbose_name='父级菜单是否显示', default=False)
+    is_keepalive = models.BooleanField(max_length=128, verbose_name="是否缓存页面")
     fixed_tag = models.BooleanField(verbose_name="固定标签", default=False)
-    iframe = models.CharField(max_length=128, blank=True, verbose_name="iframe链接地址")
-    url = models.CharField(max_length=128, blank=True, verbose_name="外链地址")
-    code = models.CharField(max_length=128, blank=True, verbose_name="权限标识")
+    iframe_url = models.CharField(max_length=128, blank=True, verbose_name="iframe链接地址")
+    iframe_loading = models.BooleanField(default=False, verbose_name="iframe加载方式")
+    is_hidden_tag = models.BooleanField(verbose_name="隐藏标签", default=False)
+    dynamic_level = models.IntegerField(default=0, verbose_name="动态路由等级")
     create_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, verbose_name='更新时间')
 
-
     class Meta:
-        verbose_name = "菜单/权限表"
+        verbose_name = "菜单/权限表元数据"
         verbose_name_plural = verbose_name
-        ordering = ("-rank","create_time")
-
+        ordering = ("-create_time",)

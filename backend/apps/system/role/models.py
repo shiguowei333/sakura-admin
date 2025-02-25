@@ -8,7 +8,7 @@ class Role(models.Model):
     """
     id = ShortUUIDField(primary_key=True, verbose_name='主键')
     name = models.CharField(max_length=128, unique=True, verbose_name='角色名称')
-    sign = models.CharField(max_length=128, unique=True, verbose_name='角色标识')
+    code = models.CharField(max_length=128, unique=True, verbose_name='角色标识')
     menus = models.ManyToManyField('menu.Menu', blank=True, verbose_name='菜单/权限')
     remark = models.CharField(max_length=200, verbose_name='备注')
     create_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
@@ -17,3 +17,4 @@ class Role(models.Model):
     class Meta:
         verbose_name = '角色表'
         verbose_name_plural = verbose_name
+        ordering = ['create_time']
