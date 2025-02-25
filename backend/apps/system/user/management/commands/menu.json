@@ -1,0 +1,48 @@
+[
+  {
+    "router_name": "system",
+    "menu_type": 0,
+    "route_path": "/system",
+    "meta": {
+      "title": "系统管理"
+    },
+    "children": [
+      {
+        "router_name": "user",
+        "menu_type": 0,
+        "route_path": "/system/user",
+        "component": "system/user/index",
+        "meta": {
+          "title": "用户管理"
+        }
+      },
+      {
+        "router_name": "role",
+        "menu_type": 0,
+        "route_path": "/system/role",
+        "component": "system/role/index",
+        "meta": {
+          "title": "角色管理"
+        }
+      },
+      {
+        "router_name": "menu",
+        "menu_type": 0,
+        "route_path": "/system/menu",
+        "component": "system/menu/index",
+        "meta": {
+          "title": "菜单管理"
+        }
+      },
+      {
+        "router_name": "department",
+        "menu_type": 0,
+        "route_path": "/system/department",
+        "component": "system/department/index",
+        "meta": {
+          "title": "部门管理"
+        }
+      }
+    ]
+  }
+]
