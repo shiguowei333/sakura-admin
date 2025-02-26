@@ -9,8 +9,8 @@ class Role(models.Model):
     id = ShortUUIDField(primary_key=True, verbose_name='主键')
     name = models.CharField(max_length=128, unique=True, verbose_name='角色名称')
     code = models.CharField(max_length=128, unique=True, verbose_name='角色标识')
-    menus = models.ManyToManyField('menu.Menu', blank=True, verbose_name='菜单/权限')
-    remark = models.CharField(max_length=200, verbose_name='备注')
+    menus = models.ManyToManyField('menu.Menu', verbose_name='菜单/权限')
+    remark = models.CharField(max_length=200, blank=True, verbose_name='备注')
     create_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, verbose_name='更新时间')
 

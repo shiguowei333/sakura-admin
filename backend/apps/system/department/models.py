@@ -8,10 +8,11 @@ class Department(models.Model):
     """
     id = ShortUUIDField(primary_key=True, verbose_name='主键')
     name = models.CharField(max_length=128, verbose_name='部门名称')
-    leader = models.CharField(max_length=128, verbose_name='部门领导')
+    leader = models.CharField(max_length=128, blank=True, verbose_name='部门领导')
     rank = models.IntegerField(default=999, verbose_name='部门排序')
     parent_department = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='child_departments', verbose_name='上级部门')
-    remark = models.CharField(max_length=128, verbose_name='备注')
+    department_level = models.IntegerField(default=0, verbose_name='部门层级')
+    remark = models.CharField(max_length=128, blank=True, verbose_name='备注')
     create_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, verbose_name='更新时间')
 

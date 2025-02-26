@@ -16,12 +16,13 @@ class Menu(models.Model):
 
     id = ShortUUIDField(primary_key=True, verbose_name='主键')
     parent = models.ForeignKey('self', on_delete=models.SET_NULL, verbose_name="上级菜单", null=True, blank=True)
-    route_name = models.CharField(max_length=128, verbose_name="路由名称/外链")
+    route_name = models.CharField(max_length=128, blank=True, verbose_name="路由名称/外链")
     menu_type = models.SmallIntegerField(choices=MenuTypeChoices, verbose_name="菜单类型")
-    code = models.CharField(max_length=128, unique=True, null=True, default=None, verbose_name="权限标识")
-    route_path = models.CharField(max_length=255, null=True, verbose_name="路由地址")
+    code = models.CharField(max_length=128, blank=True, verbose_name="权限标识")
+    route_path = models.CharField(max_length=255, blank=True, verbose_name="路由地址")
     component = models.CharField(max_length=255, blank=True, verbose_name="组件路径")
     redirect = models.CharField(max_length=128, blank=True, verbose_name="重定向地址")
+    meta = models.OneToOneField('MenuMeta', on_delete=models.CASCADE, verbose_name="菜单元数据")
     create_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, verbose_name='更新时间')
 
@@ -42,19 +43,17 @@ class MenuMeta(models.Model):
         RUBBER_BAND = "rubberBand", "rubberBand"
 
     id = ShortUUIDField(primary_key=True, verbose_name='主键')
-    title = models.CharField(max_length=128, null=True, blank=True, verbose_name="菜单名称")
+    title = models.CharField(max_length=128, verbose_name="菜单名称")
     icon = models.CharField(max_length=128, blank=True, verbose_name="菜单图标")
     rank = models.IntegerField(default=999, verbose_name="菜单排序")
-    enter_animation = models.CharField(max_length=128, choices=AnimationTypeChoices,
-                                       default=AnimationTypeChoices.BOUNCE, verbose_name="进入动画")
-    leave_animation = models.CharField(max_length=128, choices=AnimationTypeChoices,
-                                       default=AnimationTypeChoices.BOUNCE, verbose_name="离开动画")
+    enter_animation = models.CharField(max_length=128, blank=True, verbose_name="进入动画")
+    leave_animation = models.CharField(max_length=128, blank=True, verbose_name="离开动画")
     is_show = models.BooleanField(verbose_name="是否显示", default=True)
     parent_is_show = models.BooleanField(verbose_name='父级菜单是否显示', default=False)
     is_keepalive = models.BooleanField(max_length=128,default=False, verbose_name="是否缓存页面")
     fixed_tag = models.BooleanField(verbose_name="固定标签", default=False)
     iframe_url = models.CharField(max_length=128, blank=True, verbose_name="iframe链接地址")
-    iframe_loading = models.BooleanField(default=True, verbose_name="iframe加载方式")
+    iframe_loading = models.BooleanField(default=True, verbose_name="iframe加载动画")
     is_hidden_tag = models.BooleanField(verbose_name="隐藏标签名", default=True)
     dynamic_level = models.IntegerField(default=0, verbose_name="动态路由等级")
     create_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
