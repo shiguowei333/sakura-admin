@@ -15,7 +15,7 @@ class Menu(models.Model):
 
 
     id = ShortUUIDField(primary_key=True, verbose_name='主键')
-    parent = models.ForeignKey('self', on_delete=models.SET_NULL, verbose_name="上级菜单", null=True, blank=True)
+    parent = models.ForeignKey('self', on_delete=models.PROTECT, verbose_name="上级菜单", null=True, blank=True)
     route_name = models.CharField(max_length=128, blank=True, verbose_name="路由名称/外链")
     menu_type = models.SmallIntegerField(choices=MenuTypeChoices, verbose_name="菜单类型")
     code = models.CharField(max_length=128, blank=True, verbose_name="权限标识")

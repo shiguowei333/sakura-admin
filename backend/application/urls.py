@@ -16,10 +16,11 @@ Including another URLconf
 """
 # from django.contrib import admin
 from django.urls import path, include
-from apps.system.user import views
+from apps.system.user import permissions
 
 urlpatterns = [
-    path('api/auth/login', views.LoginView.as_view(), name='login'),
-    path('api/auth/token/refresh', views.RefreshView.as_view(), name='refresh'),
+    path('api/auth/login', permissions.LoginView.as_view(), name='login'),
+    path('api/auth/token/refresh', permissions.RefreshView.as_view(), name='refresh'),
+    path('api/auth/asyncroutes', permissions.AsyncRoutesView.as_view(), name='asyncroutes'),
     path('api/user/', include('apps.system.user.urls')),
 ]
