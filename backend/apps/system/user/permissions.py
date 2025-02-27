@@ -63,10 +63,13 @@ class LoginView(APIView):
         expiration_time = current_time + access_token.lifetime
         expiration_time_str = expiration_time.strftime("%Y-%m-%d %H:%M:%S")
         user_data = UserSerializer(user).data
+        # 获取用户角色信息
+        roles = user.roles.all()
         data = {
             'avatar': user_data['avatar'],
             'username': user_data['username'],
             'nickname': user_data['name'],
+            'roles': [role.code for role in roles],
             'accessToken': str(access_token),
             'refreshToken': str(refresh),
             'expires': expiration_time_str
