@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.utils import timezone
 from django.contrib.auth import authenticate
+from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenRefreshView
@@ -11,9 +12,37 @@ from ..menu.models import Menu
 from ..menu.serializers import RouteSerializer
 
 
+# 生成菜单树形结构
+def build_tree(data: list, parent_val=None, id_key='id', parent_key='parent') -> list:
+    """
+    通用树形结构生成器
+    :param data: 原始扁平数据列表
+    :param parent_val: 当前父节点值（自动识别）
+    :param id_key: ID字段名
+    :param parent_key: 父ID字段名
+    :return: 标准树形结构
+    """
+    tree = []
+    for item in data.copy():
+        if item.get(parent_key) == parent_val:
+            data.remove(item)
+            children = build_tree(data, item[id_key], id_key, parent_key)
+            if children:
+                item['children'] = children
+            # temp_item = item.copy()
+            # temp_item.pop(parent_key, None)
+            # tree.append(temp_item)
+            tree.append(item)
+    return tree
+
+
+
 # Create your views here.
 # 登录视图
 class LoginView(APIView):
+
+    authentication_classes = []
+    permission_classes = [AllowAny]
     def post(self, request):
         serializer = LoginReqSerializer(data=request.data)
         # 登录参数序列化器校验
@@ -79,9 +108,9 @@ class AsyncRoutesView(APIView):
         user = request.user
         roles = user.roles.all()
         # 根据用户角色获取所有关联的菜单、外链、内嵌，避免重复通过 distinct 去重
-        menus = Menu.objects.filter(role__in=roles, menu_type_in=(Menu.MenuTypeChoices.MENU, Menu.MenuTypeChoices.IFRAME, Menu.MenuTypeChoices.LINK)).distinct().order_by("meta__rank")
+        menus = Menu.objects.filter(role__in=roles, menu_type__in=(Menu.MenuTypeChoices.MENU, Menu.MenuTypeChoices.IFRAME, Menu.MenuTypeChoices.LINK)).distinct().order_by("meta__rank")
 
-        # 获取用户关联的所有权限，并按照 parent_id 进行分组
+        # 获取用户关联的所有按钮权限字，并按照 parent_id 进行分组
         permissions = Menu.objects.filter(role__in=roles, menu_type=Menu.MenuTypeChoices.BUTTON).distinct()
         # 将权限根据 parent_id 进行分组
         permission_dict = {}
@@ -92,5 +121,7 @@ class AsyncRoutesView(APIView):
             permission_dict[parent_id].append(perm.code)
 
         serializer = RouteSerializer(menus, many=True, context={"permission_dict": permission_dict})
+
+        tree_data = build_tree(serializer.data)
         # 返回 JSON 响应
-        return SuccessResponse(data=serializer.data, message="动态路由获取成功")
+        return SuccessResponse(data=tree_data, message="动态路由获取成功")

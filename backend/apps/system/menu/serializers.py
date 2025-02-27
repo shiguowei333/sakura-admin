@@ -54,9 +54,10 @@ class RouteSerializer(serializers.ModelSerializer):
         meta_data = {key: value for key, value in meta_serializer.data.items() if value not in [None, "", [], {}]}
 
         # 添加 roles 列表
-
+        meta_data["roles"] = [role.code for role in obj.roles.all()]
         # 添加 auth 列表
-        meta_data["auths"] = permission_dict.get(obj.id, [])
+        if obj.id in permission_dict:
+            meta_data["auths"] = permission_dict.get(obj.id)
 
         return meta_data
 
