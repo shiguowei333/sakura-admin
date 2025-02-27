@@ -42,7 +42,6 @@ const onLogin = async (formEl) => {
         .loginByUsername({ username: ruleForm.username, password: ruleForm.password })
         .then(res => {
           if (res.success) {
-            console.log(res)
             // 获取后端路由
             return initRouter().then(() => {
               router.push(getTopMenu(true).path).then(() => {

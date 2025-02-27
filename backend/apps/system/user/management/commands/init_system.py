@@ -21,7 +21,7 @@ class Command(BaseCommand):
             route_name = system_obj['router_name'],
             menu_type = system_obj['menu_type'],
             route_path = system_obj['route_path'],
-            meta = MenuMeta.objects.create(title = system_obj['meta']['title'])
+            meta = MenuMeta.objects.create(title = system_obj['meta']['title'], icon = system_obj['meta']['icon'])
         )
         # system子菜单创建
         for menu in menu_data[0]['children']:
@@ -31,7 +31,7 @@ class Command(BaseCommand):
                 route_path = menu['route_path'],
                 component = menu['component'],
                 parent = system_menu,
-                meta = MenuMeta.objects.create(title = menu['meta']['title'], dynamic_level = menu['meta']['dynamic_level'])
+                meta = MenuMeta.objects.create(title = menu['meta']['title'], icon = menu['meta']['icon'])
             )
 
         # 初始化超管角色，超管角色拥有所有菜单权限

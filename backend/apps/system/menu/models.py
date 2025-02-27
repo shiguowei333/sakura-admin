@@ -29,6 +29,7 @@ class Menu(models.Model):
     class Meta:
         verbose_name = "菜单/权限表"
         verbose_name_plural = verbose_name
+        db_table = 'system_menu'
         ordering = ("create_time",)
 
 
@@ -45,21 +46,21 @@ class MenuMeta(models.Model):
     id = ShortUUIDField(primary_key=True, verbose_name='主键')
     title = models.CharField(max_length=128, verbose_name="菜单名称")
     icon = models.CharField(max_length=128, blank=True, verbose_name="菜单图标")
-    rank = models.IntegerField(default=999, verbose_name="菜单排序")
+    rank = models.IntegerField(default=99, verbose_name="菜单排序")
     enter_animation = models.CharField(max_length=128, blank=True, verbose_name="进入动画")
     leave_animation = models.CharField(max_length=128, blank=True, verbose_name="离开动画")
     is_show = models.BooleanField(verbose_name="是否显示", default=True)
-    parent_is_show = models.BooleanField(verbose_name='父级菜单是否显示', default=False)
+    parent_is_show = models.BooleanField(verbose_name='父级菜单是否显示', default=True)
     is_keepalive = models.BooleanField(max_length=128,default=False, verbose_name="是否缓存页面")
     fixed_tag = models.BooleanField(verbose_name="固定标签", default=False)
     iframe_url = models.CharField(max_length=128, blank=True, verbose_name="iframe链接地址")
     iframe_loading = models.BooleanField(default=True, verbose_name="iframe加载动画")
     is_hidden_tag = models.BooleanField(verbose_name="隐藏标签名", default=True)
-    dynamic_level = models.IntegerField(default=0, verbose_name="动态路由等级")
     create_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, verbose_name='更新时间')
 
     class Meta:
         verbose_name = "菜单/权限表元数据"
         verbose_name_plural = verbose_name
+        db_table = 'system_menu_meta'
         ordering = ("-create_time",)

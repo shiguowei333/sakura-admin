@@ -55,3 +55,4 @@ class User(AbstractBaseUser):
     class Meta:
         verbose_name = "用户表"
         verbose_name_plural = verbose_name
+        db_table = 'system_user'

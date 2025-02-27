@@ -17,4 +17,5 @@ class Role(models.Model):
     class Meta:
         verbose_name = '角色表'
         verbose_name_plural = verbose_name
+        db_table = 'system_role'
         ordering = ['create_time']

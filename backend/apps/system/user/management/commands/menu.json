@@ -4,7 +4,8 @@
     "menu_type": 0,
     "route_path": "/system",
     "meta": {
-      "title": "系统管理"
+      "title": "系统管理",
+      "icon": "ri:settings-3-line"
     },
     "children": [
       {
@@ -14,7 +15,7 @@
         "component": "system/user/index",
         "meta": {
           "title": "用户管理",
-          "dynamic_level": 1
+          "icon": "ri:admin-line"
         }
       },
       {
@@ -24,7 +25,7 @@
         "component": "system/role/index",
         "meta": {
           "title": "角色管理",
-          "dynamic_level": 1
+          "icon": "ri:admin-fill"
         }
       },
       {
@@ -34,7 +35,7 @@
         "component": "system/menu/index",
         "meta": {
           "title": "菜单管理",
-          "dynamic_level": 1
+          "icon": "ep:menu"
         }
       },
       {
@@ -44,7 +45,7 @@
         "component": "system/department/index",
         "meta": {
           "title": "部门管理",
-          "dynamic_level": 1
+          "icon": "ri:git-branch-line"
         }
       }
     ]
