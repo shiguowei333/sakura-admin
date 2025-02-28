@@ -22,5 +22,5 @@ urlpatterns = [
     path('api/auth/login', permissions.LoginView.as_view(), name='login'),
     path('api/auth/token/refresh', permissions.RefreshView.as_view(), name='refresh'),
     path('api/auth/asyncroutes', permissions.AsyncRoutesView.as_view(), name='asyncroutes'),
-    path('api/user/', include('apps.system.user.urls')),
+    path('api/', include('apps.system.urls'))
 ]

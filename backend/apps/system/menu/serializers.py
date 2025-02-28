@@ -29,6 +29,15 @@ class MenuMetaSerializer(serializers.ModelSerializer):
         }
 
 
+class MenuSerializer(serializers.ModelSerializer):
+    meta = MenuMetaSerializer()
+    parent = serializers.PrimaryKeyRelatedField(queryset=Menu.objects.all(), allow_null=True)
+
+    class Meta:
+        model = Menu
+        fields = ["id", "route_name", "route_path", "menu_type", "component", "code", "meta", "parent", "redirect"]
+
+
 
 class RouteSerializer(serializers.ModelSerializer):
     """
