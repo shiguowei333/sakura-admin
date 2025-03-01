@@ -10,8 +10,8 @@ class Menu(models.Model):
     class MenuTypeChoices(models.IntegerChoices):
         MENU = 0, "菜单"
         IFRAME = 1, "iframe"
-        LINK = 3, "外链"
-        BUTTON = 4, "按钮"
+        LINK = 2, "外链"
+        BUTTON = 3, "按钮"
 
 
     id = ShortUUIDField(primary_key=True, verbose_name='主键')
