@@ -37,6 +37,30 @@ class MenuSerializer(serializers.ModelSerializer):
         model = Menu
         fields = ["id", "route_name", "route_path", "menu_type", "component", "code", "meta", "parent", "redirect"]
 
+    def create(self, validated_data):
+        meta_data = validated_data.pop("meta")
+        if meta_data:
+            menu_meta = MenuMeta.objects.create(**meta_data)
+        else:
+            menu_meta = MenuMeta.objects.create(**{})
+        menu = Menu.objects.create(**validated_data, meta=menu_meta)
+        return menu
+
+    def update(self, instance, validated_data):
+        meta_data = validated_data.pop("meta", None)
+        if meta_data:
+            if instance.meta:
+                for key, value in meta_data.items():
+                    setattr(instance.meta, key, value)
+                    instance.meta.save()
+            else:
+                instance.meta = MenuMeta.objects.create(**meta_data)
+        for key, value in validated_data.items():
+            setattr(instance, key, value)
+        instance.save()
+        return instance
+
+
 
 
 class RouteSerializer(serializers.ModelSerializer):

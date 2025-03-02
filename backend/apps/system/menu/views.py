@@ -18,3 +18,7 @@ class MenuViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, *args, **kwargs):
         resp_data = super().retrieve(request, *args, **kwargs)
         return SuccessResponse(data=resp_data.data)
+
+    def perform_destroy(self, instance):
+        instance.meta.delete()
+        instance.delete()

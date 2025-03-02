@@ -6,8 +6,8 @@ from . import views
 app_name = 'menu'
 
 router = DefaultRouter()
-router.register('/', views.MenuViewSet, basename='menu')
+router.register('', views.MenuViewSet, basename='menu')
 
 urlpatterns = [
-    path('menu', include(router.urls))
+    path('menu/', include(router.urls))
 ]
