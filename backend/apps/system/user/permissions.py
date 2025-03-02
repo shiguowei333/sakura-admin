@@ -1,12 +1,13 @@
 from django.conf import settings
 from django.utils import timezone
 from django.contrib.auth import authenticate
+from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenRefreshView
 
-from utils.response import SuccessResponse, FailureResponse, UnauthorizedResponse
+from utils.response import SuccessResponse, FailureResponse
 from .serializers import LoginReqSerializer, UserSerializer
 from ..menu.models import Menu
 from ..menu.serializers import RouteSerializer
@@ -54,7 +55,7 @@ class LoginView(APIView):
         # 登录校验
         user = authenticate(username=username, password=password)
         if user is None:
-            return UnauthorizedResponse(message='用户名或密码错误')
+            return FailureResponse(message='用户名或密码错误',status=status.HTTP_400_BAD_REQUEST)
         # 获取token
         refresh = RefreshToken.for_user(user)
         access_token = refresh.access_token
