@@ -1,8 +1,11 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
+from apps.system.department.models import Department
+from apps.system.role.models import Role
 
 User = get_user_model()
+
 
 # 登录请求序列化器，可以在此处添加登录表单的校验
 class LoginReqSerializer(serializers.Serializer):
@@ -11,7 +14,26 @@ class LoginReqSerializer(serializers.Serializer):
 
 # 登录响应序列化器，格式化返回user表中需要的数据
 class UserSerializer(serializers.ModelSerializer):
+    department = serializers.PrimaryKeyRelatedField(queryset=Department.objects.all(), required=False)
+    roles = serializers.PrimaryKeyRelatedField(many=True, queryset=Role.objects.all(), required=False)
+    password = serializers.CharField(write_only=True, required=False)
     class Meta:
         model = User
-        fields = ('username', 'name', 'avatar')
-        extra_kwargs = {"password": {"write_only": True}}  # 设置密码为只写字段
+        fields = ['id', 'username', 'name', 'telephone', 'email', 'avatar', 'password', 'roles', 'department', 'is_active']
+
+
+    def create(self, validated_data):
+        password = validated_data.pop('password', None)
+        user = User.objects.create(**validated_data)
+        if password:
+            user.set_password(password)
+        user.save()
+        return user
+
+    def update(self, instance, validated_data):
+        password = validated_data.pop('password', None)
+        instance.set_password(password)
+        for key, value in validated_data.items():
+            setattr(instance, key, value)
+        instance.save()
+        return instance

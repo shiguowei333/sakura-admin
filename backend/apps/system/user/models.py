@@ -39,7 +39,7 @@ class User(AbstractBaseUser):
     id = ShortUUIDField(primary_key=True, verbose_name='主键')
     username = models.CharField(max_length=128, unique=True, verbose_name='用户名')
     name = models.CharField(max_length=128, verbose_name='姓名/昵称')
-    telephone = models.CharField(max_length=128,unique=True, verbose_name='电话号码')
+    telephone = models.CharField(max_length=128, verbose_name='电话号码')
     avatar = models.CharField(max_length=128, blank=True, verbose_name='用户头像')
     email = models.CharField(max_length=128, blank=True, verbose_name='邮箱')
     roles = models.ManyToManyField('role.Role', related_name='users', related_query_name='roles', verbose_name='用户角色')
