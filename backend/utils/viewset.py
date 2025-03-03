@@ -34,11 +34,10 @@ class CustomViewSet(ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
-
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
+            return SuccessResponse(serializer.data, message="查询成功！", page=int(request.query_params.get("page", 1)), limit=int(request.query_params.get("size", 10)), total=self.paginator.page.paginator.count)
 
         serializer = self.get_serializer(queryset, many=True)
-        return SuccessResponse(serializer.data, message="查询成功！", page=self.paginator.page, limit=self.paginator.limit, total=self.paginator.total)
+        return DetailResponse(serializer.data, message="查询成功！")

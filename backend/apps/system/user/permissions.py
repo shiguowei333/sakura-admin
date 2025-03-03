@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenRefreshView
 
-from utils.response import SuccessResponse, FailureResponse
+from utils.response import SuccessResponse, FailureResponse, DetailResponse
 from .serializers import LoginReqSerializer, UserSerializer
 from ..menu.models import Menu
 from ..menu.serializers import RouteSerializer
@@ -75,7 +75,7 @@ class LoginView(APIView):
             'refreshToken': str(refresh),
             'expires': expiration_time_str
         }
-        return SuccessResponse(data=data, message='登录成功！')
+        return DetailResponse(data=data, message='登录成功！')
 
 # 刷新令牌视图
 class RefreshView(TokenRefreshView):
@@ -101,10 +101,10 @@ class RefreshView(TokenRefreshView):
                 'expires': expiration_time_str
             }
 
-            return SuccessResponse(data=data, message="令牌刷新成功！")
+            return DetailResponse(data=data, message="令牌刷新成功！")
         except:
             # 处理错误响应
-            return UnauthorizedResponse(message="令牌已失效！")
+            return FailureResponse(message="令牌已失效！", status=status.HTTP_401_UNAUTHORIZED)
 
 
 class AsyncRoutesView(APIView):
@@ -128,4 +128,4 @@ class AsyncRoutesView(APIView):
 
         tree_data = build_tree(serializer.data)
         # 返回 JSON 响应
-        return SuccessResponse(data=tree_data, message="动态路由获取成功")
+        return DetailResponse(data=tree_data, message="动态路由获取成功")
