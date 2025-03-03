@@ -1,5 +1,6 @@
 from rest_framework.viewsets import ModelViewSet
 
+from .pagination import CustomPagination
 from .response import DetailResponse, SuccessResponse
 
 
@@ -7,6 +8,8 @@ class CustomViewSet(ModelViewSet):
     """
     自定义ModelViewSet,使用统一的响应格式
     """
+
+    pagination_class = CustomPagination
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -37,7 +40,7 @@ class CustomViewSet(ModelViewSet):
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
-            return SuccessResponse(serializer.data, message="查询成功！", page=int(request.query_params.get("page", 1)), limit=int(request.query_params.get("size", 10)), total=self.paginator.page.paginator.count)
+            return SuccessResponse(serializer.data, page=request.query_params.get('page', 1), limit=request.query_params.get('limit', 10), total=page.count)
 
         serializer = self.get_serializer(queryset, many=True)
         return DetailResponse(serializer.data, message="查询成功！")
