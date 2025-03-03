@@ -15,10 +15,26 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 # from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
+from drf_yasg import openapi
+from drf_yasg.views import get_schema_view
+from rest_framework.permissions import AllowAny
+
 from apps.system.user import permissions
 
+schema_view = get_schema_view(
+    openapi.Info(
+        title="API文档",
+        default_version="v1",
+        description="sakura_admin系统接口文档",
+    ),
+    public=True,
+    permission_classes=[AllowAny]
+)
+
 urlpatterns = [
+# Swagger UI
+    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='swagger'),
     path('api/auth/login', permissions.LoginView.as_view(), name='login'),
     path('api/auth/token/refresh', permissions.RefreshView.as_view(), name='refresh'),
     path('api/auth/asyncroutes', permissions.AsyncRoutesView.as_view(), name='asyncroutes'),
