@@ -37,8 +37,8 @@ class SuccessResponse(BaseResponse):
 
 # 不包含分页的数据标准成功响应
 class DetailResponse(BaseResponse):
-    def __init__(self, data=None, message='请求处理成功！'):
-        super().__init__(2000, True, message, data, status.HTTP_200_OK)
+    def __init__(self, data=None, message='请求处理成功！', headers=None):
+        super().__init__(2000, True, message, data, status.HTTP_200_OK, headers=headers)
 
 # 标准响应失败的返回，业务码默认返回0，自定义返回data数据和message
 class FailureResponse(BaseResponse):
