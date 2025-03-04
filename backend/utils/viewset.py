@@ -17,7 +17,7 @@ class CustomViewSet(ModelViewSet):
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
-        return DetailResponse(message="创建成功！", headers=headers)
+        return DetailResponse(message="新增成功！", headers=headers)
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -30,7 +30,7 @@ class CustomViewSet(ModelViewSet):
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
-        return DetailResponse(message="更新成功！")
+        return DetailResponse(message="修改成功！")
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
