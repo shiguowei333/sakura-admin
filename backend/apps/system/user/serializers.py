@@ -31,8 +31,10 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
     def update(self, instance, validated_data):
-        password = validated_data.pop('password', None)
-        instance.set_password(password)
+        validated_data.pop('password', None)
+        roles = validated_data.pop('roles', None)
+        if roles is not None:
+            instance.roles.set(roles)
         for key, value in validated_data.items():
             setattr(instance, key, value)
         instance.save()

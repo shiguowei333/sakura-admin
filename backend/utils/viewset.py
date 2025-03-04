@@ -42,7 +42,7 @@ class CustomViewSet(ModelViewSet):
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
-            return SuccessResponse(serializer.data, page=request.query_params.get('page', 1), limit=request.query_params.get('limit', 10), total=page.count)
+            return SuccessResponse(serializer.data, message="查询成功！", page= request.query_params.get('page'), limit= request.query_params.get('limit'), total=queryset.count())
 
         serializer = self.get_serializer(queryset, many=True)
         return DetailResponse(serializer.data, message="查询成功！")
