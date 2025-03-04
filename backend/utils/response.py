@@ -43,4 +43,4 @@ class DetailResponse(BaseResponse):
 # 标准响应失败的返回，业务码默认返回0，自定义返回data数据和message
 class FailureResponse(BaseResponse):
     def __init__(self, message='请求处理失败！', status=status.HTTP_400_BAD_REQUEST):
-        super().__init__(0, False, message, status)
+        super().__init__(0, False, message, status=status)

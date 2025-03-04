@@ -11,3 +11,4 @@ from .serializers import DepartmentSerializer
 class DepartmentViewSet(CustomViewSet):
     queryset = Department.objects.all()
     serializer_class = DepartmentSerializer
+    pagination_class = None
