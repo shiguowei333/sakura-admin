@@ -181,7 +181,8 @@ AUTH_USER_MODEL ='user.User'
 # REST_FRAMEWORK配置
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': ['rest_framework_simplejwt.authentication.JWTAuthentication'],
-    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"]
+    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
+    "EXCEPTION_HANDLER": "utils.exception.CustomExceptionHandler"
 }
 
 # JWT配置
