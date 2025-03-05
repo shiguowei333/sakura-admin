@@ -51,11 +51,11 @@ class MenuMeta(models.Model):
     leave_animation = models.CharField(max_length=128, blank=True, verbose_name="离开动画")
     is_show = models.BooleanField(verbose_name="是否显示", default=True)
     parent_is_show = models.BooleanField(verbose_name='父级菜单是否显示', default=True)
-    is_keepalive = models.BooleanField(max_length=128,default=False, verbose_name="是否缓存页面")
+    is_keepalive = models.BooleanField(max_length=128,default=True, verbose_name="是否缓存页面")
     fixed_tag = models.BooleanField(verbose_name="固定标签", default=False)
     iframe_url = models.CharField(max_length=128, blank=True, verbose_name="iframe链接地址")
     iframe_loading = models.BooleanField(default=True, verbose_name="iframe加载动画")
-    is_hidden_tag = models.BooleanField(verbose_name="隐藏标签名", default=True)
+    is_hidden_tag = models.BooleanField(verbose_name="隐藏标签名", default=False)
     create_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, verbose_name='更新时间')
 
