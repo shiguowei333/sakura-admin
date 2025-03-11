@@ -2,7 +2,7 @@ import { http } from '@/utils/http'
 
 const url = '/system/department/'
 
-export const getDepartmentList = () => http.get(url)
+export const getDepartmentList = (form) => http.get(url)
 
 export const addDepartment = () => http.post(url)
 
