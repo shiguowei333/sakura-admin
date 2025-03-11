@@ -7,8 +7,8 @@
           <el-input v-model="form.name" placeholder="请输入部门名称" clearable class="!w-[180px]" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" :icon="useRenderIcon('ri:search-line')" :loading="loading" @click=""> 搜索 </el-button>
-          <el-button :icon="useRenderIcon('ri:refresh-line')" @click=""> 重置 </el-button>
+          <el-button type="primary" :icon="useRenderIcon('ri:search-line')" :loading="loading" @click="onSearch"> 搜索 </el-button>
+          <el-button :icon="useRenderIcon('ri:refresh-line')" @click="onReset"> 重置 </el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -60,13 +60,29 @@ const form = reactive({
 const loading = ref(false);
 const dataList = ref([]);
 
+// 获取部门数据，带查询条件
 const getDeptData = async () => {
-  let res = await getDepartmentList(form)
-  dataList.value =  handleTree(res.data, 'id', 'parent')
-  console.log(dataList.value)
+  let res = await getDepartmentList(form.name)
+  if(res.code == 2000) {
+    dataList.value =  handleTree(res.data, 'id', 'parent')
+    return res
+  }
 }
 
+// 搜索点击事件
+const onSearch = async() => {
+  loading.value = true
+  let res = await getDeptData()
+  if(res.code = 2000) {
+    loading.value = false
+  }
+}
 
+// 重置点击事件
+const onReset = () => {
+  form.name = ''
+  getDeptData()
+}
 
 // 弹窗相关
 const isDialogVisible = ref(false);
