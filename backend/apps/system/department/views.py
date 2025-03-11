@@ -12,3 +12,7 @@ class DepartmentViewSet(CustomViewSet):
     queryset = Department.objects.all()
     serializer_class = DepartmentSerializer
     pagination_class = None
+
+    def get_queryset(self):
+        name = self.request.query_params.get('name', None)
+        return self.queryset.filter(name__icontains=name)
