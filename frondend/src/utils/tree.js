@@ -186,3 +186,25 @@ export const handleTree = (
   }
   return tree;
 };
+
+
+/**
+ * @description 获取当前节点的所有父节点id
+ * @param tree 数据源
+ * @param targetId 查询初始id字段
+ * @param path 父节点id初始列表，默认[]
+ * @returns 该节点祖先节点路径
+ */
+export const getParentPath = (tree, targetId, path = []) => {
+  for (const node of tree) {
+    const currentPath = [...path, node.id];
+    if (node.id === targetId) {
+      return currentPath;  // 找到子节点，返回完整路径
+    }
+    if (node.children?.length) {
+      const result = getParentPath(node.children, targetId, currentPath);
+      if (result) return result;  // 递归查找子节点
+    }
+  }
+  return null;  // 未找到返回null
+}

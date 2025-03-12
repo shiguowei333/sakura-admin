@@ -7,8 +7,8 @@
           <el-input v-model="form.name" placeholder="请输入部门名称" clearable class="!w-[180px]" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" :icon="useRenderIcon('ri:search-line')" :loading="loading" @click="onSearch"> 搜索 </el-button>
-          <el-button :icon="useRenderIcon('ri:refresh-line')" @click="onReset"> 重置 </el-button>
+          <el-button type="primary" :icon="useRenderIcon(Search)" :loading="loading" @click="onSearch"> 搜索 </el-button>
+          <el-button :icon="useRenderIcon(Reset)" @click="onReset"> 重置 </el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -16,7 +16,7 @@
     <div ref="tableContainer" class="table">
       <div class="title">
         <span style="font-size: 20px; font-weight: 700; height: 32px; line-height: 32px;">部门管理</span>
-        <el-button type="primary" :icon="useRenderIcon('ri:add-circle-line')"> 新增 </el-button>
+        <el-button type="primary" :icon="useRenderIcon(Add)" @click="handleOnAdd"> 新增 </el-button>
       </div>
       <el-table :data="dataList" style="margin-bottom: 20px; margin: 0 1%; width: 98%;" row-key="id" lazy default-expand-all :header-cell-style="{'background-color': 'var(--el-fill-color-light)','color': 'var(--el-text-color-primary)'}">
         <el-table-column prop="name" label="部门名称" />
@@ -26,7 +26,7 @@
         <el-table-column label="操作" align="center" fixed="right" min-width="100px">
           <template #default="{ row }">
             <div class="ellink">
-              <el-link :underline="false" type="primary" @click="handleEdit(row)">新增</el-link>
+              <el-link :underline="false" type="primary" @click="handleOnAdd(e, row.id)">新增</el-link>
               <el-link :underline="false" type="primary" @click="handleCreat(row.id)">编辑</el-link>
               <el-link :underline="false" type="danger" @click="handleDelete(row)">删除</el-link>
             </div>
@@ -34,40 +34,62 @@
         </el-table-column>
       </el-table>
     </div>
-  </div>
+    <!-- 新增/编辑表单 -->
+    <el-dialog v-model="isDialogVisible" :title="isEditMode ? '编辑部门' : '创建部门'" :width="'40%'">
+        <el-form ref="deptFormRef" :model="deptData" :rules="rules" label-width="80px" label-position="right">
+          <el-form-item v-if="isEditMode" prop="id" label="部门ID">
+            <el-input v-model="deptData.id" disabled />
+          </el-form-item>
+          <el-form-item label="部门名称" prop="name">
+            <el-input v-model="deptData.name" maxlength="20" show-word-limit placeholder="请输入部门名称" />
+          </el-form-item>
+          <el-form-item label="部门领导" prop="leader">
+            <el-input v-model="deptData.leader" maxlength="20" show-word-limit placeholder="请输入部门领导名称" />
+          </el-form-item>
+          <el-form-item label="部门排序" prop="rank">
+            <el-input-number v-model="deptData.rank":min="1" :max="999" :value-on-clear="1" controls-position="right" />
+          </el-form-item>
+          <el-form-item label="上级部门" prop="parent">
+            <el-cascader v-model="deptData.parent" :options="dataList" :props="{ value: 'id', label: 'name', children: 'children', checkStrictly: true }" clearable filterable :show-all-levels="false" placeholder="无上级部门" />
+          </el-form-item>
+          <el-form-item label="备注" prop="remark">
+            <el-input v-model="deptData.remark" maxlength="50" type="textarea" show-word-limit placeholder="请输入备注" />
+          </el-form-item>
+        </el-form>
+        <template #footer>
+          <div class="dialog-footer">
+            <el-button @click="isDialogVisible=false">取消</el-button>
+            <el-button type="primary" @click="handleAdd">确认</el-button>
+          </div>
+        </template>
+      </el-dialog>
+    </div>
 </template>
 
 <script setup>
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
-import { ref, reactive, onMounted, onBeforeUnmount, nextTick } from "vue";
-import { handleTree } from "@/utils/tree";
+import { ref, reactive, onMounted, nextTick } from "vue";
+import { handleTree, getParentPath } from "@/utils/tree";
 import deptdialog from "./components/deptdialog.vue";
 import { getDepartmentList, addDepartment, updateDepartment, deleteDepartment } from "@/api/system/department";
 import { isAllEmpty } from "@pureadmin/utils";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { message } from "@/utils/message";
+import Search from "@iconify-icons/ri/search-line";
+import Reset from "@iconify-icons/ri/refresh-line";
+import Add from "@iconify-icons/ri/add-circle-line"
 
-const formRef = ref(null);
 
 defineOptions({
   name: "department"
 });
 
-// 筛选过滤器数据
+// 搜索区域相关
+const formRef = ref(null);
 const form = reactive({
   name: ""
 });
 const loading = ref(false);
-const dataList = ref([]);
-
-// 获取部门数据，带查询条件
-const getDeptData = async () => {
-  let res = await getDepartmentList(form.name)
-  if(res.code == 2000) {
-    dataList.value =  handleTree(res.data, 'id', 'parent')
-    return res
-  }
-}
 
 // 搜索点击事件
 const onSearch = async() => {
@@ -84,11 +106,63 @@ const onReset = () => {
   getDeptData()
 }
 
-// 弹窗相关
+//数据展示区域
+const dataList = ref([]);
+
+const getDeptData = async () => {
+  let res = await getDepartmentList(form.name)
+  if(res.code == 2000) {
+    dataList.value =  handleTree(res.data, 'id', 'parent')
+    return res
+  }
+}
+
+
+
+// 表单相关
 const isDialogVisible = ref(false);
 const isEditMode = ref(false);
-const selectedDept = ref({});
+const deptFormRef = ref(null)
+const deptData = ref({
+  id: '',
+  name: '',
+  leader: '',
+  rank: 99,
+  parent: null,
+  remark: ''
+})
+// 校验规则
+const rules = reactive({
+  name: [{required: true, message: '请输入部门名称', trigger: 'blur'}],
+  leader: [{required: true, message: '请输入部门领导名称', trigger: 'blur'}],
+  rank: [{required: true, message: '请输入部门排序', trigger: 'blur'}]
+})
+// 处理新增按钮点击事件逻辑
+const handleOnAdd = async(e,id) => {
+  isEditMode.value = false
+  isDialogVisible.value = true
+  await nextTick()
+  deptFormRef.value.resetFields()
+  // 需要获取祖先节点全路径
+  deptData.value.parent = getParentPath(dataList.value, id)
 
+}
+// 处理新增提交事件
+const handleAdd = async() => {
+  let data = deptData.value
+  if(deptData.value.parent) {
+    data.parent = data.parent[data.parent.length-1]
+  }
+  let res = await addDepartment(deptData.value)
+  if(res.code == 2000) {
+    isDialogVisible.value = false
+    getDeptData()
+    ElMessage({
+      type: 'success',
+      message: '新增成功'
+    })
+  }
+}
 
 onMounted(() => {
   getDeptData()
@@ -144,5 +218,9 @@ onMounted(() => {
   display: flex;
   gap: 10px;
   justify-content: center;
+}
+
+.dialog-footer {
+  text-align: right;
 }
 </style>
