@@ -1,5 +1,3 @@
-from django.shortcuts import render
-from rest_framework import viewsets
 
 from utils.viewset import CustomViewSet
 from .models import Department
@@ -16,5 +14,5 @@ class DepartmentViewSet(CustomViewSet):
     def get_queryset(self):
         name = self.request.query_params.get('name', None)
         if name is None or name == '':
-            return self.queryset
+            return self.queryset.all()
         return self.queryset.filter(name__icontains=name)

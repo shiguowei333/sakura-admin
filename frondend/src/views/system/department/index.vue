@@ -37,7 +37,7 @@
       </div>
     </div>
     <!-- 新增/编辑表单 -->
-    <el-dialog v-model="isDialogVisible" :title="isEditMode ? '编辑部门' : '新增部门'" :width="'40%'">
+    <el-dialog v-model="isDialogVisible" :title="isEditMode ? '编辑部门' : '新增部门'" :width="'40%'" @close="clearFormData">
         <el-form ref="deptFormRef" :model="deptData" :rules="rules" label-width="80px" label-position="right">
           <el-form-item label="部门名称" prop="name">
             <el-input v-model="deptData.name" maxlength="20" show-word-limit placeholder="请输入部门名称" />
@@ -64,7 +64,7 @@
       </el-dialog>
       <!-- 删除确认弹窗 -->
       <el-dialog v-model="isDelDialogVisible" title="提示" width="500" align-center>
-        <p>是否确认删除"{{ deptData.name }}"</p>
+        <p>是否确认删除"{{ delDeptName }}"</p>
         <template #footer>
           <div class="dialog-footer">
             <el-button @click="isDelDialogVisible=false">取消</el-button>
@@ -77,7 +77,7 @@
 
 <script setup>
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
-import { ref, reactive, onMounted, nextTick } from "vue";
+import { ref, reactive, onMounted } from "vue";
 import { handleTree, getParentPath } from "@/utils/tree";
 import { getDepartmentList, addDepartment, updateDepartment, deleteDepartment } from "@/api/system/department";
 import { ElMessage } from "element-plus";
@@ -147,8 +147,6 @@ const rules = reactive({
 const handleOnAdd = async(e,id) => {
   isEditMode.value = false
   isDialogVisible.value = true
-  await nextTick()
-  deptFormRef.value.resetFields()
   // 需要获取该节点和祖先节点全路径
   deptData.value.parent = getParentPath(dataList.value, id)
 
@@ -157,8 +155,6 @@ const handleOnAdd = async(e,id) => {
 const handleOnEdit = async(e, row) => {
   isEditMode.value = true
   isDialogVisible.value = true
-  await nextTick()
-  deptFormRef.value.resetFields()
   deptData.value.id = row.id
   deptData.value.name = row.name
   deptData.value.leader = row.leader
@@ -167,6 +163,11 @@ const handleOnEdit = async(e, row) => {
 
   // 需要获取祖先节点全路径
   deptData.value.parent = getParentPath(dataList.value, row.parent)
+}
+
+// 清空表单的处理函数
+const clearFormData = () => {
+  deptFormRef.value.resetFields()
 }
 
 // 处理提交事件
@@ -194,17 +195,20 @@ const handleAdd = () => {
 
 // 删除部门相关
 const isDelDialogVisible = ref(false)
+const delDeptId = ref('')
+const delDeptName = ref('')
 
 // 处理删除按钮点击事件逻辑
 const handleOnDel = (e, row) => {
   isDelDialogVisible.value = true
-  deptData.value = Object.assign(row)
+  delDeptId.value = row.id
+  delDeptName.value = row.name
 }
 
 const handleDel = async() => {
   
   try {
-    let res = await deleteDepartment(deptData.value.id)
+    let res = await deleteDepartment(delDeptId.value)
     if(res.code == 2000) {
       getDeptData()
       ElMessage({
