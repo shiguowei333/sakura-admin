@@ -15,6 +15,6 @@ class DepartmentViewSet(CustomViewSet):
 
     def get_queryset(self):
         name = self.request.query_params.get('name', None)
-        if name is None:
+        if name is None or name == '':
             return self.queryset
         return self.queryset.filter(name__icontains=name)

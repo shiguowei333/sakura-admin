@@ -79,11 +79,8 @@
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import { ref, reactive, onMounted, nextTick } from "vue";
 import { handleTree, getParentPath } from "@/utils/tree";
-import deptdialog from "./components/deptdialog.vue";
 import { getDepartmentList, addDepartment, updateDepartment, deleteDepartment } from "@/api/system/department";
-import { isAllEmpty } from "@pureadmin/utils";
-import { ElMessage, ElMessageBox } from "element-plus";
-import { message } from "@/utils/message";
+import { ElMessage } from "element-plus";
 import Search from "@iconify-icons/ri/search-line";
 import Reset from "@iconify-icons/ri/refresh-line";
 import Add from "@iconify-icons/ri/add-circle-line"
@@ -250,9 +247,8 @@ onMounted(() => {
 
 .searchform {
   background-color: var(--el-bg-color);
-  /* padding: 10px; */
   .el-form-item {
-    margin: 10px;
+    margin: 15px 20px;
   }
 }
 
