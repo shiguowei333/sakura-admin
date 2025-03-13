@@ -27,19 +27,16 @@
           <template #default="{ row }">
             <div class="ellink">
               <el-link :underline="false" type="primary" @click="handleOnAdd(e, row.id)">新增</el-link>
-              <el-link :underline="false" type="primary" @click="handleCreat(row.id)">编辑</el-link>
-              <el-link :underline="false" type="danger" @click="handleDelete(row)">删除</el-link>
+              <el-link :underline="false" type="primary" @click="handleOnEdit(e, row)">编辑</el-link>
+              <el-link :underline="false" type="danger" @click="handleOnDel(e, row)">删除</el-link>
             </div>
           </template>
         </el-table-column>
       </el-table>
     </div>
     <!-- 新增/编辑表单 -->
-    <el-dialog v-model="isDialogVisible" :title="isEditMode ? '编辑部门' : '创建部门'" :width="'40%'">
+    <el-dialog v-model="isDialogVisible" :title="isEditMode ? '编辑部门' : '新增部门'" :width="'40%'">
         <el-form ref="deptFormRef" :model="deptData" :rules="rules" label-width="80px" label-position="right">
-          <el-form-item v-if="isEditMode" prop="id" label="部门ID">
-            <el-input v-model="deptData.id" disabled />
-          </el-form-item>
           <el-form-item label="部门名称" prop="name">
             <el-input v-model="deptData.name" maxlength="20" show-word-limit placeholder="请输入部门名称" />
           </el-form-item>
@@ -60,6 +57,16 @@
           <div class="dialog-footer">
             <el-button @click="isDialogVisible=false">取消</el-button>
             <el-button type="primary" @click="handleAdd">确认</el-button>
+          </div>
+        </template>
+      </el-dialog>
+      <!-- 删除确认弹窗 -->
+      <el-dialog v-model="isDelDialogVisible" title="提示" width="500" align-center>
+        <p>是否确认删除"{{ deptData.name }}"</p>
+        <template #footer>
+          <div class="dialog-footer">
+            <el-button @click="isDelDialogVisible=false">取消</el-button>
+            <el-button type="primary" @click="handleDel">确认</el-button>
           </div>
         </template>
       </el-dialog>
@@ -143,24 +150,76 @@ const handleOnAdd = async(e,id) => {
   isDialogVisible.value = true
   await nextTick()
   deptFormRef.value.resetFields()
-  // 需要获取祖先节点全路径
+  // 需要获取该节点和祖先节点全路径
   deptData.value.parent = getParentPath(dataList.value, id)
 
 }
-// 处理新增提交事件
-const handleAdd = async() => {
-  let data = deptData.value
-  if(deptData.value.parent) {
-    data.parent = data.parent[data.parent.length-1]
-  }
-  let res = await addDepartment(deptData.value)
-  if(res.code == 2000) {
-    isDialogVisible.value = false
-    getDeptData()
+// 处理编辑按钮点击事件逻辑
+const handleOnEdit = async(e, row) => {
+  isEditMode.value = true
+  isDialogVisible.value = true
+  await nextTick()
+  deptFormRef.value.resetFields()
+  deptData.value.id = row.id
+  deptData.value.name = row.name
+  deptData.value.leader = row.leader
+  deptData.value.rank = row.rank
+  deptData.value.remark = row.remark
+
+  // 需要获取祖先节点全路径
+  deptData.value.parent = getParentPath(dataList.value, row.parent)
+}
+
+// 处理提交事件
+const handleAdd = () => {
+  deptFormRef.value.validate(async(valid) => {
+    if(valid){
+      let data = deptData.value
+      if(deptData.value.parent) {
+        data.parent = data.parent[data.parent.length-1]
+      }
+      let res = isEditMode.value?await updateDepartment(deptData.value.id, deptData.value):await addDepartment(deptData.value)
+      if(res.code == 2000) {
+        isDialogVisible.value = false
+        getDeptData()
+        ElMessage({
+         type: 'success',
+         message: isEditMode.value?'编辑成功':'新增成功'
+       })
+      }else {
+        return false
+      }
+    }
+  })
+}
+
+// 删除部门相关
+const isDelDialogVisible = ref(false)
+
+// 处理删除按钮点击事件逻辑
+const handleOnDel = (e, row) => {
+  isDelDialogVisible.value = true
+  deptData.value = Object.assign(row)
+}
+
+const handleDel = async() => {
+  
+  try {
+    let res = await deleteDepartment(deptData.value.id)
+    if(res.code == 2000) {
+      getDeptData()
+      ElMessage({
+         type: 'success',
+         message: '删除成功'
+      })
+    }
+  } catch (error) {
     ElMessage({
-      type: 'success',
-      message: '新增成功'
+      type: 'error',
+      message: '删除失败，该部门下存在子部门！'
     })
+  } finally {
+    isDelDialogVisible.value = false
   }
 }
 

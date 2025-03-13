@@ -169,6 +169,16 @@ y
   get(url, params, config) {
     return this.request("get", url, params, config);
   }
+
+  /** 单独抽离的`get`工具函数 */
+  put(url, params, config) {
+    return this.request("put", url, params, config);
+  }
+
+  /** 单独抽离的`get`工具函数 */
+  delete(url, params, config) {
+    return this.request("delete", url, params, config);
+  }
 }
 
 export const http = new PureHttp();
