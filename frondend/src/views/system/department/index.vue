@@ -18,7 +18,8 @@
         <span style="font-size: 20px; font-weight: 700; height: 32px; line-height: 32px;">部门管理</span>
         <el-button type="primary" :icon="useRenderIcon(Add)" @click="handleOnAdd"> 新增 </el-button>
       </div>
-      <el-table :data="dataList" style="margin-bottom: 20px; margin: 0 1%; width: 98%;" row-key="id" lazy default-expand-all :header-cell-style="{'background-color': 'var(--el-fill-color-light)','color': 'var(--el-text-color-primary)'}">
+      <div class="inner-table">
+        <el-table :data="dataList" class="el-table" height="100%" style="margin-bottom: 20px; margin: 0 1%; width: 98%;" row-key="id" lazy default-expand-all :header-cell-style="{'background-color': 'var(--el-fill-color-light)','color': 'var(--el-text-color-primary)'}">
         <el-table-column prop="name" label="部门名称" />
         <el-table-column prop="leader" label="部门领导" />
         <el-table-column prop="rank" label="排序" sortable />
@@ -33,6 +34,7 @@
           </template>
         </el-table-column>
       </el-table>
+      </div>
     </div>
     <!-- 新增/编辑表单 -->
     <el-dialog v-model="isDialogVisible" :title="isEditMode ? '编辑部门' : '新增部门'" :width="'40%'">
@@ -262,14 +264,18 @@ onMounted(() => {
 }
 
 .table {
-  overflow: hidden;
+  display: flex;
+  flex-direction: column;
   flex: 1;
   margin-top: 10px;
   background-color: var(--el-bg-color);
   /* 解决element表格在flex布局下无法自适应窗口宽度缩小的问题 */
-  position: relative;
-  .el-table {
+  .inner-table {
+    flex: 1;
+    position: relative;
+    .el-table {
     position: absolute;
+    }
   }
 }
 
