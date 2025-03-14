@@ -27,7 +27,7 @@
           </el-table-column>
           <el-table-column prop="menu_type" label="菜单类型" >
             <template #default="{ row }">
-                <el-tag type="primary" effect="plain">{{ menuType(row.menu_type) }}</el-tag>
+                <el-tag :type="menuType(row.menu_type)[0]" effect="plain">{{ menuType(row.menu_type)[1] }}</el-tag>
             </template>
           </el-table-column>
           <el-table-column prop="route_name" label="路由名称" />
@@ -135,15 +135,15 @@
   const menuType = (menu_type) => {
     switch(menu_type) {
         case 0:
-            return '菜单'
+            return ['primary', '菜单']
         case 1:
-            return 'iframe'
+            return ['success', 'iframe']
         case 2:
-            return '外链'
+            return ['warning', '外链']
         case 3:
-            return '按钮'
+            return ['danger', '按钮']
         default:
-            return ''
+            return ['', '']
     }
   }
   
