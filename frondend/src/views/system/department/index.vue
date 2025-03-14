@@ -62,16 +62,6 @@
           </div>
         </template>
       </el-dialog>
-      <!-- 删除确认弹窗 -->
-      <el-dialog v-model="isDelDialogVisible" title="提示" width="500" align-center>
-        <p>是否确认删除"{{ delDeptName }}"</p>
-        <template #footer>
-          <div class="dialog-footer">
-            <el-button @click="isDelDialogVisible=false">取消</el-button>
-            <el-button type="primary" @click="handleDel">确认</el-button>
-          </div>
-        </template>
-      </el-dialog>
     </div>
 </template>
 
@@ -80,7 +70,7 @@ import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import { ref, reactive, onMounted } from "vue";
 import { handleTree, getParentPath } from "@/utils/tree";
 import { getDepartmentList, addDepartment, updateDepartment, deleteDepartment } from "@/api/system/department";
-import { ElMessage } from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus";
 import Search from "@iconify-icons/ri/search-line";
 import Reset from "@iconify-icons/ri/refresh-line";
 import Add from "@iconify-icons/ri/add-circle-line"
@@ -194,15 +184,39 @@ const handleAdd = () => {
 }
 
 // 删除部门相关
-const isDelDialogVisible = ref(false)
 const delDeptId = ref('')
 const delDeptName = ref('')
 
 // 处理删除按钮点击事件逻辑
 const handleOnDel = (e, row) => {
-  isDelDialogVisible.value = true
   delDeptId.value = row.id
   delDeptName.value = row.name
+  ElMessageBox.confirm(
+    `是否确认删除'${row.name}'?`,
+    '提示',
+    {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning',
+    }
+  )
+    .then(async() => {
+      try {
+        let res = await deleteDepartment(delDeptId.value)
+        if(res.code == 2000) {
+          getDeptData()
+          ElMessage({
+             type: 'success',
+             message: '删除成功'
+          })
+       }
+      } catch (error) {
+        ElMessage({
+          type: 'error',
+          message: '删除失败，该部门下存在子部门！'
+        })
+      }
+    })
 }
 
 const handleDel = async() => {
