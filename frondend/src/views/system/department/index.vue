@@ -67,7 +67,7 @@
 
 <script setup>
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
-import { ref, reactive, onMounted } from "vue";
+import { ref, reactive, onMounted, nextTick } from "vue";
 import { handleTree, getParentPath } from "@/utils/tree";
 import { getDepartmentList, addDepartment, updateDepartment, deleteDepartment } from "@/api/system/department";
 import { ElMessage, ElMessageBox } from "element-plus";
@@ -118,7 +118,7 @@ const getDeptData = async () => {
 // 表单相关
 const isDialogVisible = ref(false);
 const isEditMode = ref(false);
-const deptFormRef = ref(null)
+const deptFormRef = ref()
 const deptData = ref({
   id: '',
   name: '',
@@ -137,6 +137,8 @@ const rules = reactive({
 const handleOnAdd = async(e,id) => {
   isEditMode.value = false
   isDialogVisible.value = true
+  await nextTick()
+  deptFormRef.value.resetFields()
   // 需要获取该节点和祖先节点全路径
   deptData.value.parent = getParentPath(dataList.value, id)
 
@@ -145,6 +147,8 @@ const handleOnAdd = async(e,id) => {
 const handleOnEdit = async(e, row) => {
   isEditMode.value = true
   isDialogVisible.value = true
+  await nextTick()
+  deptFormRef.value.resetFields()
   deptData.value.id = row.id
   deptData.value.name = row.name
   deptData.value.leader = row.leader
@@ -155,10 +159,6 @@ const handleOnEdit = async(e, row) => {
   deptData.value.parent = getParentPath(dataList.value, row.parent)
 }
 
-// 清空表单的处理函数
-const clearFormData = () => {
-  deptFormRef.value.resetFields()
-}
 
 // 处理提交事件
 const handleAdd = () => {
@@ -219,26 +219,6 @@ const handleOnDel = (e, row) => {
     })
 }
 
-const handleDel = async() => {
-  
-  try {
-    let res = await deleteDepartment(delDeptId.value)
-    if(res.code == 2000) {
-      getDeptData()
-      ElMessage({
-         type: 'success',
-         message: '删除成功'
-      })
-    }
-  } catch (error) {
-    ElMessage({
-      type: 'error',
-      message: '删除失败，该部门下存在子部门！'
-    })
-  } finally {
-    isDelDialogVisible.value = false
-  }
-}
 
 onMounted(() => {
   getDeptData()

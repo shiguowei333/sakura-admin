@@ -37,7 +37,7 @@ class MenuSerializer(serializers.ModelSerializer):
     showLink = serializers.BooleanField(source="meta.is_show")
     showParent = serializers.BooleanField(source="meta.parent_is_show")
     keepAlive = serializers.BooleanField(source="meta.is_keepalive")
-    frameSrc = serializers.CharField(source="meta.iframe_url", allow_null=True, required=False)
+    frameSrc = serializers.CharField(source="meta.iframe_url", allow_blank=True)
     frameLoading = serializers.BooleanField(source="meta.iframe_loading", allow_null=True, required=False)
     hiddenTag = serializers.BooleanField(source="meta.is_hidden_tag")
     fixedTag = serializers.BooleanField(source="meta.fixed_tag")
