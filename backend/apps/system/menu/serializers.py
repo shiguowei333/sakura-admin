@@ -30,12 +30,23 @@ class MenuMetaSerializer(serializers.ModelSerializer):
 
 
 class MenuSerializer(serializers.ModelSerializer):
-    meta = MenuMetaSerializer()
     parent = serializers.PrimaryKeyRelatedField(queryset=Menu.objects.all(), allow_null=True)
+    title = serializers.CharField(source="meta.title")
+    icon = serializers.CharField(source="meta.icon", allow_blank=True)
+    rank = serializers.IntegerField(source="meta.rank")
+    showLink = serializers.BooleanField(source="meta.is_show")
+    showParent = serializers.BooleanField(source="meta.parent_is_show")
+    keepAlive = serializers.BooleanField(source="meta.is_keepalive")
+    frameSrc = serializers.CharField(source="meta.iframe_url", allow_null=True, required=False)
+    frameLoading = serializers.BooleanField(source="meta.iframe_loading", allow_null=True, required=False)
+    hiddenTag = serializers.BooleanField(source="meta.is_hidden_tag")
+    fixedTag = serializers.BooleanField(source="meta.fixed_tag")
+    enterTransition = serializers.CharField(source="meta.enter_animation", allow_blank=True)
+    leaveTransition = serializers.CharField(source="meta.leave_animation", allow_blank=True)
 
     class Meta:
         model = Menu
-        fields = ["id", "route_name", "route_path", "menu_type", "component", "code", "meta", "parent", "redirect"]
+        fields = ["id", "route_name", "route_path", "menu_type", "component", "code", "parent", "redirect", "title", "icon", "rank", "showLink", "showParent", "keepAlive", "frameSrc", "frameLoading", "hiddenTag", "fixedTag", "enterTransition", "leaveTransition"]
 
     def create(self, validated_data):
         meta_data = validated_data.pop("meta")
