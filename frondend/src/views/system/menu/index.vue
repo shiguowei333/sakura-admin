@@ -199,7 +199,7 @@
   
   
   defineOptions({
-    name: "department"
+    name: "menuManager"
   });
   
   // 搜索区域相关
