@@ -37,7 +37,7 @@
       </div>
     </div>
     <!-- 新增/编辑表单 -->
-    <el-dialog v-model="isDialogVisible" :title="isEditMode ? '编辑部门' : '新增部门'" :width="'40%'" @close="clearFormData">
+    <el-dialog v-model="isDialogVisible" :title="isEditMode ? '编辑部门' : '新增部门'" :width="'40%'">
         <el-form ref="deptFormRef" :model="deptData" :rules="rules" label-width="80px" label-position="right">
           <el-form-item label="部门名称" prop="name">
             <el-input v-model="deptData.name" maxlength="20" show-word-limit placeholder="请输入部门名称" />
