@@ -12,7 +12,5 @@ class DepartmentViewSet(CustomViewSet):
     pagination_class = None
 
     def get_queryset(self):
-        name = self.request.query_params.get('name', None)
-        if name is None or name == '':
-            return self.queryset.all()
+        name = self.request.query_params.get('name', '')
         return self.queryset.filter(name__icontains=name)

@@ -16,6 +16,4 @@ class MenuViewSet(CustomViewSet):
 
     def get_queryset(self):
         name = self.request.query_params.get('name', None)
-        if name is None or name == '':
-            return self.queryset.all()
         return self.queryset.filter(meta__title__icontains=name)

@@ -12,3 +12,8 @@ class RoleViewSet(CustomViewSet):
     queryset = Role.objects.all()
     serializer_class = RoleSerializer
     pagination_class = None
+
+    def get_queryset(self):
+        name = self.request.query_params.get('name', '')
+        code = self.request.query_params.get('code', '')
+        return self.queryset.filter(name__icontains=name, code__icontains=code)
