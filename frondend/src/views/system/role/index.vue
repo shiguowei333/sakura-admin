@@ -24,11 +24,11 @@
             </div>
             <div class="inner-table">
                 <el-table :data="dataList" class="el-table" height="100%"
-                    style="margin-bottom: 20px; margin: 0 1%; width: 98%;" row-key="id" lazy default-expand-all
+                    style="margin-bottom: 20px; margin: 0 1%; width: 98%;" row-key="id" lazy default-expand-all show-overflow-tooltip
                     :header-cell-style="{ 'background-color': 'var(--el-fill-color-light)', 'color': 'var(--el-text-color-primary)' }">
                     <el-table-column prop="name" label="角色名称" />
                     <el-table-column prop="code" label="角色标识" />
-                    <el-table-column prop="mark" label="备注" />
+                    <el-table-column prop="remark" label="备注" />
                     <el-table-column prop="create_time" label="创建时间" />
                     <el-table-column label="操作" align="center" fixed="right" min-width="100px">
                         <template #default="{ row }">
@@ -43,7 +43,26 @@
             </div>
         </div>
         <!-- 新增/编辑表单 -->
-
+        <el-dialog v-model="isDialogVisible" :title="isEditMode ? '编辑角色' : '新增角色'" :width="'40%'">
+            <el-form ref="roleFormRef" :model="roleData" :rules="rules" label-width="80px" label-position="right">
+                <el-form-item label="角色名称" prop="name">
+                    <el-input v-model="roleData.name" maxlength="20" show-word-limit placeholder="请输入角色名称" />
+                </el-form-item>
+                <el-form-item label="角色标识" prop="code">
+                    <el-input v-model="roleData.code" maxlength="20" show-word-limit placeholder="请输入角色标识" />
+                </el-form-item>
+                <el-form-item label="备注" prop="remark">
+                    <el-input v-model="roleData.remark" maxlength="50" type="textarea" show-word-limit
+                        placeholder="请输入备注" />
+                </el-form-item>
+            </el-form>
+            <template #footer>
+                <div class="dialog-footer">
+                    <el-button @click="isDialogVisible = false">取消</el-button>
+                    <el-button type="primary" @click="handleSubmit">确认</el-button>
+                </div>
+            </template>
+        </el-dialog>
     </div>
 </template>
 
@@ -105,112 +124,61 @@ const roleData = ref({
     id: '',
     name: '',
     code: '',
-    mark: '',
+    remark: '',
     create_time: '',
     menus: []
 })
 
 // 校验规则
 const rules = reactive({
-    title: [{ required: true, message: '请输入菜单名称', trigger: 'blur' }],
+    name: [{ required: true, message: '请输入角色名称', trigger: 'blur' }],
+    code: [{ required: true, message: '请输入角色标识', trigger: 'blur' }]
 })
 // 处理新增按钮点击事件逻辑
-const handleOnAdd = async (e, id) => {
+const handleOnAdd = async () => {
     isEditMode.value = false
     isDialogVisible.value = true
     await nextTick()
-    initForm()
-    // 需要获取该节点和祖先节点全路径
-    menuData.value.parent = getParentPath(dataList.value, id)
+    roleFormRef.value.resetFields()
 }
 // 处理编辑按钮点击事件逻辑
 const handleOnEdit = async (e, row) => {
     isEditMode.value = true
     isDialogVisible.value = true
     await nextTick()
-    initForm()
+    roleFormRef.value.resetFields()
     for (const k in row) {
-        menuData.value[k] = row[k]
+        roleData.value[k] = row[k]
     }
-    // 需要获取祖先节点全路径
-    menuData.value.parent = getParentPath(dataList.value, row.parent)
 }
 
 // 处理提交事件
-const handleAdd = () => {
-    menuFormRef.value.validate(async (valid) => {
+const handleSubmit = () => {
+    roleFormRef.value.validate(async (valid) => {
         if (valid) {
-            let data = menuData.value
-            if (menuData.value.parent) {
-                data.parent = data.parent[data.parent.length - 1]
-            }
-            switch (data.menu_type) {
-                case 0:
-                    data.code = ''
-                    data.frameSrc = ''
-                    break;
-                case 1:
-                    data.code = ''
-                    data.component = ''
-                    data.redirect = ''
-                    break;
-                case 2:
-                    data.code = ''
-                    data.component = ''
-                    data.redirect = ''
-                    data.enterTransition = ''
-                    data.leaveTransition = ''
-                    data.frameSrc = ''
-                    break;
-                case 3:
-                    data.route_name = ''
-                    data.route_path = ''
-                    data.icon = ''
-                    data.component = ''
-                    data.redirect = ''
-                    data.enterTransition = ''
-                    data.leaveTransition = ''
-                    data.frameSrc = ''
-                    break;
-                default:
-                    break;
-            }
-            let res = isEditMode.value ? await updateMenu(data.id, data) : await addMenu(data)
-            if (res.code == 2000) {
-                isDialogVisible.value = false
-                getMenuData()
+            let data = roleData.value
+            delete data.create_time
+            try {
+                let res = isEditMode.value ? await updateRole(data.id, data) : await addRole(data)
+                if (res.code == 2000) {
+                    isDialogVisible.value = false
+                    formRef.value.resetFields()
+                    getRoleData()
+                    ElMessage({
+                        type: 'success',
+                        message: isEditMode.value ? '编辑成功' : '新增成功'
+                    })
+                } else {
+                    return false
+                }
+            } catch (error) {
                 ElMessage({
-                    type: 'success',
-                    message: isEditMode.value ? '编辑成功' : '新增成功'
-                })
-            } else {
-                return false
+                        type: 'error',
+                        message: isEditMode.value ? '编辑失败！该角色标识已存在' : '新增失败！该角色标识已存在'
+                    })
             }
         }
     })
-}
-
-const initForm = () => {
-    menuData.value.id = '',
-        menuData.value.route_name = '',
-        menuData.value.route_path = '',
-        menuData.value.menu_type = 0,
-        menuData.value.component = '',
-        menuData.value.code = '',
-        menuData.value.title = '',
-        menuData.value.icon = '',
-        menuData.value.rank = 99,
-        menuData.value.showLink = true,
-        menuData.value.showParent = false,
-        menuData.value.keepAlive = false,
-        menuData.value.frameSrc = '',
-        menuData.value.frameLoading = true,
-        menuData.value.hiddenTag = false,
-        menuData.value.fixedTag = false,
-        menuData.value.enterTransition = '',
-        menuData.value.leaveTransition = '',
-        menuData.value.parent = '',
-        menuData.value.redirect = ''
 }
 
 
@@ -218,7 +186,7 @@ const initForm = () => {
 const handleOnDel = (e, row) => {
 
     ElMessageBox.confirm(
-        `是否确认删除角色'${row.title}'?`,
+        `是否确认删除角色'${row.name}'?`,
         '提示',
         {
             confirmButtonText: '确定',
@@ -228,9 +196,10 @@ const handleOnDel = (e, row) => {
     )
         .then(async () => {
             try {
-                let res = await deleteMenu(row.id)
+                let res = await deleteRole(row.id)
                 if (res.code == 2000) {
-                    getMenuData()
+                    formRef.value.resetFields()
+                    getRoleData()
                     ElMessage({
                         type: 'success',
                         message: '删除成功'
