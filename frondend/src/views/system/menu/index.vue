@@ -234,7 +234,7 @@
       return res
     }
   }
-  // 
+  // 字典值转换函数
   const menuType = (menu_type) => {
     switch(menu_type) {
         case 0:

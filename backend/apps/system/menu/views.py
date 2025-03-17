@@ -15,5 +15,5 @@ class MenuViewSet(CustomViewSet):
         instance.delete()
 
     def get_queryset(self):
-        name = self.request.query_params.get('name', None)
+        name = self.request.query_params.get('name', '')
         return self.queryset.filter(meta__title__icontains=name)
