@@ -178,7 +178,7 @@
           <template #footer>
             <div class="dialog-footer">
               <el-button @click="isDialogVisible=false">取消</el-button>
-              <el-button type="primary" @click="handleAdd">确认</el-button>
+              <el-button type="primary" @click="handleSubmit">确认</el-button>
             </div>
           </template>
         </el-dialog>
@@ -309,7 +309,7 @@ const handleOnEdit = async(e, row) => {
 }
   
 // 处理提交事件
-const handleAdd = () => {
+const handleSubmit = () => {
   menuFormRef.value.validate(async(valid) => {
     if(valid){
       let data = menuData.value
