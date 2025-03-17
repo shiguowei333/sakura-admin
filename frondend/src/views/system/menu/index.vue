@@ -46,7 +46,7 @@
         </div>
       </div>
       <!-- 新增/编辑表单 -->
-      <el-dialog v-model="isDialogVisible" :title="isEditMode ? '编辑菜单' : '新增菜单'" :width="'30%'">
+      <el-dialog v-model="isDialogVisible" :title="isEditMode ? '编辑菜单' : '新增菜单'" :width="'50%'" @close="clearIcon">
           <el-form ref="menuFormRef" :model="menuData" :rules="rules" label-width="100px" label-position="right">
             <el-row :gutter="20">
               <el-col :span="24">
@@ -81,7 +81,7 @@
                 </el-col>                
                 <el-col v-if="menuData.menu_type != 3" :span="12">
                   <el-form-item label="菜单图标">
-                    <IconSelect v-model="menuData.icon" class="w-full" />
+                    <IconSelect ref="iconSelect" v-model="menuData.icon" class="w-full" />
                   </el-form-item>
                 </el-col>
                 <el-col :span="12">
@@ -384,7 +384,12 @@ const initForm = () => {
   menuData.value.parent = '',
   menuData.value.redirect = ''
 }
- 
+
+const iconSelect = ref(null)
+// 清空图标
+const clearIcon = () => {
+  iconSelect.value.onClear()
+}
 
 // 处理删除按钮点击事件逻辑
 const handleOnDel = (e, row) => {

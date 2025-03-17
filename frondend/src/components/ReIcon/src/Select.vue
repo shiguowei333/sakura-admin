@@ -117,6 +117,10 @@ watch(
   () => filterValue.value,
   () => (currentPage.value = 1)
 );
+
+defineExpose({
+  onClear
+})
 </script>
 
 <template>
