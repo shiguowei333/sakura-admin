@@ -220,7 +220,7 @@
   
   // 重置点击事件
   const onReset = () => {
-    form.name = ''
+    formRef.value.resetFields()
     getMenuData()
   }
   
@@ -350,6 +350,7 @@ const handleAdd = () => {
       let res = isEditMode.value?await updateMenu(data.id, data):await addMenu(data)
       if(res.code == 2000) {
         isDialogVisible.value = false
+        formRef.value.resetFields()
         getMenuData()
         ElMessage({
          type: 'success',
@@ -407,6 +408,7 @@ const handleOnDel = (e, row) => {
       try {
         let res = await deleteMenu(row.id)
         if(res.code == 2000) {
+          formRef.value.resetFields()
           getMenuData()
           ElMessage({
              type: 'success',

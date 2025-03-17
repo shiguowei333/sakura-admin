@@ -98,7 +98,7 @@ const onSearch = async() => {
 
 // 重置点击事件
 const onReset = () => {
-  form.name = ''
+  formRef.value.resetFields()
   getDeptData()
 }
 
@@ -171,6 +171,7 @@ const handleAdd = () => {
       let res = isEditMode.value?await updateDepartment(deptData.value.id, deptData.value):await addDepartment(deptData.value)
       if(res.code == 2000) {
         isDialogVisible.value = false
+        formRef.value.resetFields()
         getDeptData()
         ElMessage({
          type: 'success',
@@ -204,6 +205,7 @@ const handleOnDel = (e, row) => {
       try {
         let res = await deleteDepartment(delDeptId.value)
         if(res.code == 2000) {
+          formRef.value.resetFields()
           getDeptData()
           ElMessage({
              type: 'success',
