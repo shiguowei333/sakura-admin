@@ -48,6 +48,8 @@ class Command(BaseCommand):
         )
         admin_user.roles.set([admin_role])
         admin_user.set_password('admin123')
+        admin_user.telephone = '13333333333'
+        admin_user.email = 'sakura@admin.com'
         admin_user.save()
         # 输出结果
         self.stdout.write(
