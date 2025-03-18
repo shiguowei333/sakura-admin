@@ -19,50 +19,54 @@
         <el-button type="primary" :icon="useRenderIcon(Add)" @click="handleOnAdd"> 新增 </el-button>
       </div>
       <div class="inner-table">
-        <el-table :data="dataList" class="el-table" height="100%" style="margin-bottom: 20px; margin: 0 1%; width: 98%;" row-key="id" lazy default-expand-all :header-cell-style="{'background-color': 'var(--el-fill-color-light)','color': 'var(--el-text-color-primary)'}">
-        <el-table-column prop="name" label="部门名称" />
-        <el-table-column prop="leader" label="部门领导" />
-        <el-table-column prop="rank" label="排序" sortable />
-        <el-table-column prop="remark" label="备注" />
-        <el-table-column label="操作" align="center" fixed="right" min-width="100px">
-          <template #default="{ row }">
-            <div class="ellink">
-              <el-link :underline="false" type="primary" @click="handleOnAdd(e, row.id)">新增</el-link>
-              <el-link :underline="false" type="primary" @click="handleOnEdit(e, row)">编辑</el-link>
-              <el-link :underline="false" type="danger" @click="handleOnDel(e, row)">删除</el-link>
-            </div>
-          </template>
-        </el-table-column>
-      </el-table>
+        <el-table :data="dataList" class="el-table" height="100%" style="margin-bottom: 20px; margin: 0 1%; width: 98%;"
+          row-key="id" lazy default-expand-all
+          :header-cell-style="{ 'background-color': 'var(--el-fill-color-light)', 'color': 'var(--el-text-color-primary)' }">
+          <el-table-column prop="name" label="部门名称" />
+          <el-table-column prop="leader" label="部门领导" />
+          <el-table-column prop="rank" label="排序" sortable />
+          <el-table-column prop="remark" label="备注" />
+          <el-table-column label="操作" align="center" fixed="right" min-width="100px">
+            <template #default="{ row }">
+              <div class="ellink">
+                <el-link :underline="false" type="primary" @click="handleOnAdd(e, row.id)">新增</el-link>
+                <el-link :underline="false" type="primary" @click="handleOnEdit(e, row)">编辑</el-link>
+                <el-link :underline="false" type="danger" @click="handleOnDel(e, row)">删除</el-link>
+              </div>
+            </template>
+          </el-table-column>
+        </el-table>
       </div>
     </div>
     <!-- 新增/编辑表单 -->
     <el-dialog v-model="isDialogVisible" :title="isEditMode ? '编辑部门' : '新增部门'" :width="'40%'">
-        <el-form ref="deptFormRef" :model="deptData" :rules="rules" label-width="80px" label-position="right">
-          <el-form-item label="部门名称" prop="name">
-            <el-input v-model="deptData.name" maxlength="20" show-word-limit placeholder="请输入部门名称" />
-          </el-form-item>
-          <el-form-item label="部门领导" prop="leader">
-            <el-input v-model="deptData.leader" maxlength="20" show-word-limit placeholder="请输入部门领导名称" />
-          </el-form-item>
-          <el-form-item label="部门排序" prop="rank">
-            <el-input-number v-model="deptData.rank":min="1" :max="999" :value-on-clear="1" controls-position="right" />
-          </el-form-item>
-          <el-form-item label="上级部门" prop="parent">
-            <el-cascader v-model="deptData.parent" :options="dataList" :props="{ value: 'id', label: 'name', children: 'children', checkStrictly: true }" clearable filterable :show-all-levels="false" placeholder="无上级部门" />
-          </el-form-item>
-          <el-form-item label="备注" prop="remark">
-            <el-input v-model="deptData.remark" maxlength="50" type="textarea" show-word-limit placeholder="请输入备注" />
-          </el-form-item>
-        </el-form>
-        <template #footer>
-          <div class="dialog-footer">
-            <el-button @click="isDialogVisible=false">取消</el-button>
-            <el-button type="primary" @click="handleSubmit">确认</el-button>
-          </div>
-        </template>
-      </el-dialog>
-    </div>
+      <el-form ref="deptFormRef" :model="deptData" :rules="rules" label-width="80px" label-position="right">
+        <el-form-item label="部门名称" prop="name">
+          <el-input v-model="deptData.name" maxlength="20" show-word-limit placeholder="请输入部门名称" />
+        </el-form-item>
+        <el-form-item label="部门领导" prop="leader">
+          <el-input v-model="deptData.leader" maxlength="20" show-word-limit placeholder="请输入部门领导名称" />
+        </el-form-item>
+        <el-form-item label="部门排序" prop="rank">
+          <el-input-number v-model="deptData.rank" :min="1" :max="999" :value-on-clear="1" controls-position="right" />
+        </el-form-item>
+        <el-form-item label="上级部门" prop="parent">
+          <el-cascader v-model="deptData.parent" :options="dataList"
+            :props="{ value: 'id', label: 'name', children: 'children', checkStrictly: true }" clearable filterable
+            :show-all-levels="false" placeholder="无上级部门" />
+        </el-form-item>
+        <el-form-item label="备注" prop="remark">
+          <el-input v-model="deptData.remark" maxlength="50" type="textarea" show-word-limit placeholder="请输入备注" />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="isDialogVisible = false">取消</el-button>
+          <el-button type="primary" @click="handleSubmit">确认</el-button>
+        </div>
+      </template>
+    </el-dialog>
+  </div>
 </template>
 
 <script setup>
@@ -88,10 +92,10 @@ const form = reactive({
 const loading = ref(false);
 
 // 搜索点击事件
-const onSearch = async() => {
+const onSearch = async () => {
   loading.value = true
   let res = await getDeptData()
-  if(res.code = 2000) {
+  if (res.code = 2000) {
     loading.value = false
   }
 }
@@ -107,8 +111,8 @@ const dataList = ref([]);
 
 const getDeptData = async () => {
   let res = await getDepartmentList(form.name)
-  if(res.code == 2000) {
-    dataList.value =  handleTree(res.data, 'id', 'parent')
+  if (res.code == 2000) {
+    dataList.value = handleTree(res.data, 'id', 'parent')
     return res
   }
 }
@@ -129,12 +133,12 @@ const deptData = ref({
 })
 // 校验规则
 const rules = reactive({
-  name: [{required: true, message: '请输入部门名称', trigger: 'blur'}],
-  leader: [{required: true, message: '请输入部门领导名称', trigger: 'blur'}],
-  rank: [{required: true, message: '请输入部门排序', trigger: 'blur'}]
+  name: [{ required: true, message: '请输入部门名称', trigger: 'blur' }],
+  leader: [{ required: true, message: '请输入部门领导名称', trigger: 'blur' }],
+  rank: [{ required: true, message: '请输入部门排序', trigger: 'blur' }]
 })
 // 处理新增按钮点击事件逻辑
-const handleOnAdd = async(e,id) => {
+const handleOnAdd = async (e, id) => {
   isEditMode.value = false
   isDialogVisible.value = true
   await nextTick()
@@ -144,7 +148,7 @@ const handleOnAdd = async(e,id) => {
 
 }
 // 处理编辑按钮点击事件逻辑
-const handleOnEdit = async(e, row) => {
+const handleOnEdit = async (e, row) => {
   isEditMode.value = true
   isDialogVisible.value = true
   await nextTick()
@@ -162,22 +166,22 @@ const handleOnEdit = async(e, row) => {
 
 // 处理提交事件
 const handleSubmit = () => {
-  deptFormRef.value.validate(async(valid) => {
-    if(valid){
+  deptFormRef.value.validate(async (valid) => {
+    if (valid) {
       let data = deptData.value
-      if(deptData.value.parent) {
-        data.parent = data.parent[data.parent.length-1]
+      if (deptData.value.parent) {
+        data.parent = data.parent[data.parent.length - 1]
       }
-      let res = isEditMode.value?await updateDepartment(deptData.value.id, deptData.value):await addDepartment(deptData.value)
-      if(res.code == 2000) {
+      let res = isEditMode.value ? await updateDepartment(deptData.value.id, deptData.value) : await addDepartment(deptData.value)
+      if (res.code == 2000) {
         isDialogVisible.value = false
         formRef.value.resetFields()
         getDeptData()
         ElMessage({
-         type: 'success',
-         message: isEditMode.value?'编辑成功':'新增成功'
-       })
-      }else {
+          type: 'success',
+          message: isEditMode.value ? '编辑成功' : '新增成功'
+        })
+      } else {
         return false
       }
     }
@@ -201,17 +205,17 @@ const handleOnDel = (e, row) => {
       type: 'warning',
     }
   )
-    .then(async() => {
+    .then(async () => {
       try {
         let res = await deleteDepartment(delDeptId.value)
-        if(res.code == 2000) {
+        if (res.code == 2000) {
           formRef.value.resetFields()
           getDeptData()
           ElMessage({
-             type: 'success',
-             message: '删除成功'
+            type: 'success',
+            message: '删除成功'
           })
-       }
+        }
       } catch (error) {
         ElMessage({
           type: 'error',
@@ -247,6 +251,7 @@ onMounted(() => {
 
 .searchform {
   background-color: var(--el-bg-color);
+
   .el-form-item {
     margin: 15px 20px;
   }
@@ -265,12 +270,14 @@ onMounted(() => {
   flex: 1;
   margin-top: 10px;
   background-color: var(--el-bg-color);
+
   /* 解决element表格在flex布局下无法自适应窗口宽度缩小的问题 */
   .inner-table {
     flex: 1;
     position: relative;
+
     .el-table {
-    position: absolute;
+      position: absolute;
     }
   }
 }
