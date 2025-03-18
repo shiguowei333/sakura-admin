@@ -15,9 +15,9 @@ class LoginReqSerializer(serializers.Serializer):
 # 登录响应序列化器，格式化返回user表中需要的数据
 class UserSerializer(serializers.ModelSerializer):
     create_time = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
-    department = serializers.PrimaryKeyRelatedField(queryset=Department.objects.all(), required=False)
+    department = serializers.PrimaryKeyRelatedField(queryset=Department.objects.all(), required=False, allow_null=True)
     roles = serializers.PrimaryKeyRelatedField(many=True, queryset=Role.objects.all(), required=False)
-    password = serializers.CharField(write_only=True, required=False)
+    password = serializers.CharField(write_only=True, required=False, allow_null=True)
     class Meta:
         model = User
         fields = ['id', 'username', 'name', 'telephone', 'email', 'avatar', 'password', 'roles', 'department', 'is_active', 'create_time']
