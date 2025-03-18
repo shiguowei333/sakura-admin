@@ -9,3 +9,5 @@ export const addUser = (data) => http.post(url, {data})
 export const updateUser = (id, data) => http.put(`${url}${id}/`, {data})
 
 export const deleteUser = (id) => http.delete(`${url}${id}/`)
+
+export const resetPassword = (id) => http.post(`${url}reset/`, {data: {id}})
