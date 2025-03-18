@@ -33,14 +33,14 @@
                     style="margin-bottom: 20px; margin: 0 1%; width: 98%;" row-key="id"
                     :header-cell-style="{ 'background-color': 'var(--el-fill-color-light)', 'color': 'var(--el-text-color-primary)' }">
                     <el-table-column prop="username" label="用户名" />
-                    <el-table-column prop="name" label="姓名" />
+                    <el-table-column prop="name" label="用户姓名" />
                     <el-table-column prop="telephone" label="手机号码" />
                     <el-table-column prop="email" label="邮箱" />
                     <el-table-column prop="department" label="所属部门" />
                     <el-table-column prop="is_active" label="状态" width="200">
                         <template #default="{ row }">
-                            <el-switch @change="changeStatus(e, row)" v-model="row.is_active" active-text="启用" inactive-text="禁用"
-                                inline-prompt size="large"
+                            <el-switch @change="changeStatus(e, row)" v-model="row.is_active" active-text="启用"
+                                inactive-text="禁用" inline-prompt size="large"
                                 style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949" />
                         </template>
                     </el-table-column>
@@ -59,31 +59,54 @@
             </div>
         </div>
         <!-- 新增/编辑表单 -->
-        <!-- <el-dialog v-model="isDialogVisible" :title="isEditMode ? '编辑部门' : '新增部门'" :width="'40%'">
-          <el-form ref="deptFormRef" :model="deptData" :rules="rules" label-width="80px" label-position="right">
-            <el-form-item label="部门名称" prop="name">
-              <el-input v-model="deptData.name" maxlength="20" show-word-limit placeholder="请输入部门名称" />
-            </el-form-item>
-            <el-form-item label="部门领导" prop="leader">
-              <el-input v-model="deptData.leader" maxlength="20" show-word-limit placeholder="请输入部门领导名称" />
-            </el-form-item>
-            <el-form-item label="部门排序" prop="rank">
-              <el-input-number v-model="deptData.rank":min="1" :max="999" :value-on-clear="1" controls-position="right" />
-            </el-form-item>
-            <el-form-item label="上级部门" prop="parent">
-              <el-cascader v-model="deptData.parent" :options="dataList" :props="{ value: 'id', label: 'name', children: 'children', checkStrictly: true }" clearable filterable :show-all-levels="false" placeholder="无上级部门" />
-            </el-form-item>
-            <el-form-item label="备注" prop="remark">
-              <el-input v-model="deptData.remark" maxlength="50" type="textarea" show-word-limit placeholder="请输入备注" />
-            </el-form-item>
-          </el-form>
-          <template #footer>
-            <div class="dialog-footer">
-              <el-button @click="isDialogVisible=false">取消</el-button>
-              <el-button type="primary" @click="handleSubmit">确认</el-button>
-            </div>
-          </template>
-        </el-dialog> -->
+        <el-dialog v-model="isDialogVisible" :title="isEditMode ? '编辑用户' : '新增用户'" :width="'40%'">
+            <el-form ref="userFormRef" :model="userData" :rules="rules" label-width="80px" label-position="right">
+                <el-row :gutter="20">
+                    <el-col :span="12">
+                        <el-form-item label="用户名" prop="username">
+                            <el-input v-model="userData.username" maxlength="20" show-word-limit placeholder="请输入用户名" />
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="用户姓名" prop="name">
+                            <el-input v-model="userData.name" maxlength="20" show-word-limit placeholder="请输入用户姓名" />
+                        </el-form-item>
+                    </el-col>
+                    <el-col v-if="!isEditMode" :span="12">
+                        <el-form-item label="密码" prop="password">
+                            <el-input type="password" v-model="userData.password" placeholder="请输入密码" />
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="手机号" prop="telephone">
+                            <el-input v-model="userData.telephone" maxlength="11" show-word-limit
+                                placeholder="请输入手机号" />
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="邮箱" prop="email">
+                            <el-input v-model="userData.email" maxlength="20" show-word-limit placeholder="请输入邮箱地址" />
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="所属部门" prop="department">
+                        </el-form-item>
+                    </el-col>
+                    <el-col v-if="!isEditMode" :span="12">
+                        <el-form-item label="用户状态" prop="is_active">
+                            <el-switch v-model="userData.is_active" active-text="启用"
+                                inactive-text="禁用" inline-prompt style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949" />
+                        </el-form-item>  
+                    </el-col>
+                </el-row>
+            </el-form>
+            <template #footer>
+                <div class="dialog-footer">
+                    <el-button @click="isDialogVisible = false">取消</el-button>
+                    <el-button type="primary" @click="handleSubmit">确认</el-button>
+                </div>
+            </template>
+        </el-dialog>
     </div>
 </template>
 
@@ -145,67 +168,65 @@ const changeStatus = (e, row) => {
     console.log(row)
 }
 
-//   // 表单相关
-//   const isDialogVisible = ref(false);
-//   const isEditMode = ref(false);
-//   const userFormRef = ref()
-//   const userData = ref({
-
-//   })
-//   // 校验规则
-//   const rules = reactive({
-//     name: [{required: true, message: '请输入部门名称', trigger: 'blur'}],
-//   })
-//   // 处理新增按钮点击事件逻辑
-//   const handleOnAdd = async(e,id) => {
-//     isEditMode.value = false
-//     isDialogVisible.value = true
-//     await nextTick()
-//     deptFormRef.value.resetFields()
-//     // 需要获取该节点和祖先节点全路径
-//     deptData.value.parent = getParentPath(dataList.value, id)
-
-//   }
-//   // 处理编辑按钮点击事件逻辑
-//   const handleOnEdit = async(e, row) => {
-//     isEditMode.value = true
-//     isDialogVisible.value = true
-//     await nextTick()
-//     deptFormRef.value.resetFields()
-//     deptData.value.id = row.id
-//     deptData.value.name = row.name
-//     deptData.value.leader = row.leader
-//     deptData.value.rank = row.rank
-//     deptData.value.remark = row.remark
-
-//     // 需要获取祖先节点全路径
-//     deptData.value.parent = getParentPath(dataList.value, row.parent)
-//   }
+// 表单相关
+const isDialogVisible = ref(false);
+const isEditMode = ref(false);
+const userFormRef = ref()
+const userData = ref({
+    username: '',
+    name: '',
+    password: '',
+    telephone: '',
+    email: '',
+    department: '',
+    is_active: true,
+    role: []
+})
+// 校验规则
+const rules = reactive({
+    username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
+    name: [{ required: true, message: '请输入用户姓名', trigger: 'blur' }],
+    password: [{ required: true, message: '请输入密码', trigger: 'blur' }]
+})
+// 处理新增按钮点击事件逻辑
+const handleOnAdd = async (e, id) => {
+    isEditMode.value = false
+    isDialogVisible.value = true
+    await nextTick()
+    userFormRef.value.resetFields()
+}
+// 处理编辑按钮点击事件逻辑
+const handleOnEdit = async (e, row) => {
+    isEditMode.value = true
+    isDialogVisible.value = true
+    await nextTick()
+    userFormRef.value.resetFields()
+}
 
 
-//   // 处理提交事件
-//   const handleSubmit = () => {
-//     deptFormRef.value.validate(async(valid) => {
-//       if(valid){
-//         let data = deptData.value
-//         if(deptData.value.parent) {
-//           data.parent = data.parent[data.parent.length-1]
-//         }
-//         let res = isEditMode.value?await updateDepartment(deptData.value.id, deptData.value):await addDepartment(deptData.value)
-//         if(res.code == 2000) {
-//           isDialogVisible.value = false
-//           formRef.value.resetFields()
-//           getDeptData()
-//           ElMessage({
-//            type: 'success',
-//            message: isEditMode.value?'编辑成功':'新增成功'
-//          })
-//         }else {
-//           return false
-//         }
-//       }
-//     })
-//   }
+// 处理提交事件
+const handleSubmit = () => {
+  deptFormRef.value.validate(async(valid) => {
+    if(valid){
+      let data = deptData.value
+      if(deptData.value.parent) {
+        data.parent = data.parent[data.parent.length-1]
+      }
+      let res = isEditMode.value?await updateDepartment(deptData.value.id, deptData.value):await addDepartment(deptData.value)
+      if(res.code == 2000) {
+        isDialogVisible.value = false
+        formRef.value.resetFields()
+        getDeptData()
+        ElMessage({
+         type: 'success',
+         message: isEditMode.value?'编辑成功':'新增成功'
+       })
+      }else {
+        return false
+      }
+    }
+  })
+}
 
 //   // 删除部门相关
 //   const delDeptId = ref('')
