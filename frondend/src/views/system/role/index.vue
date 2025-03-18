@@ -63,7 +63,7 @@
       </template>
     </el-dialog>
     <!-- 编辑权限抽屉组件 -->
-    <el-drawer v-model="isDrawerVisible">
+    <el-drawer v-model="isDrawerVisible" size="20%">
       <template #header>
         <h1 style="color: black;">菜单权限</h1>
       </template>
