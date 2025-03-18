@@ -68,8 +68,13 @@
         <h1 style="color: black;">菜单权限</h1>
       </template>
       <template #default>
-        <div>
-          <el-tree ref="drawerRef" style="max-width: 300px" :props="props" show-checkbox :data="menuData" node-key="id" :default-expand-all="true" :default-checked-keys="default_checked_keys" />
+        <div class="flex flex-wrap">
+          <el-checkbox v-model="isExpandAll" label="展开/折叠" />
+          <el-checkbox v-model="isSelectAll" label="全选/全不选" />
+          <el-checkbox v-model="isLinkage" label="父子联动" />
+        </div>
+        <div style="margin-top: 10px;">
+          <el-tree-v2 ref="treeRef" :height="700" style="max-width: 300px" :props="props" show-checkbox :check-strictly="!isLinkage" :data="menuData" />
         </div>
       </template>
       <template #footer>
@@ -84,7 +89,7 @@
 
 <script setup>
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
-import { ref, reactive, onMounted, nextTick } from "vue";
+import { ref, reactive, onMounted, nextTick, watch } from "vue";
 import { getRoleList, addRole, updateRole, deleteRole } from "@/api/system/role";
 import { getMenuList } from "@/api/system/menu";
 import { ElMessage, ElMessageBox } from "element-plus";
@@ -92,6 +97,7 @@ import { handleTree } from "@/utils/tree";
 import Search from "@iconify-icons/ri/search-line";
 import Reset from "@iconify-icons/ri/refresh-line";
 import Add from "@iconify-icons/ri/add-circle-line"
+import { getKeyList } from "@pureadmin/utils";
 
 
 defineOptions({
@@ -201,11 +207,16 @@ const handleSubmit = () => {
 
 // 菜单权限相关
 const isDrawerVisible = ref(false)
-const drawerRef = ref(null)
+const isExpandAll = ref(false)
+const isSelectAll = ref(false)
+const isLinkage = ref(true)
+const treeRef = ref(null)
+const treeIds = ref([])
 const menuData = ref([])
-const default_checked_keys = ref([])
 const props = {
-  label: 'title'
+    value: 'id',
+    label: 'title',
+    children: 'children'
 }
 // 处理点击出现抽屉组件
 const handleOnRole = async(e, row) => {
@@ -215,14 +226,18 @@ const handleOnRole = async(e, row) => {
   }
   let res = await getMenuList('')
   if(res.code == 2000) {
+    treeIds.value = getKeyList(res.data, "id");
     menuData.value =  handleTree(res.data, 'id', 'parent')
   }
-  drawerRef.value.setCheckedKeys(row.menus, true)
+  await nextTick()
+  isExpandAll.value = true
+  isLinkage.value = false
+  treeRef.value.setCheckedKeys(row.menus)
 }
 
 // 提交菜单权限配置
 const confirmClick = async() => {
-  roleData.value.menus = [...drawerRef.value.getHalfCheckedKeys(), ...drawerRef.value.getCheckedKeys()]
+  roleData.value.menus = [...treeRef.value.getHalfCheckedKeys(), ...treeRef.value.getCheckedKeys()]
   let res = await updateRole(roleData.value.id, roleData.value)
   if (res.code == 2000) {
     isDrawerVisible.value = false
@@ -233,6 +248,13 @@ const confirmClick = async() => {
     })
   }
 }
+
+watch(isExpandAll, val => {
+  val? treeRef.value.setExpandedKeys(treeIds.value): treeRef.value.setExpandedKeys([]);
+});
+watch(isSelectAll, val => {
+  val? treeRef.value.setCheckedKeys(treeIds.value): treeRef.value.setCheckedKeys([]);
+});
 
 
 // 处理删除按钮点击事件逻辑
@@ -274,6 +296,10 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
+::v-deep(.el-drawer__header) {
+    margin-bottom: 0;
+}
+
 ::v-deep(.el-table .cell) {
   overflow: hidden; // 溢出隐藏
   text-overflow: ellipsis; // 溢出用省略号显示
